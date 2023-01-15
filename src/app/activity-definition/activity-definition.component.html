@@ -1,0 +1,317 @@
+<dx-data-grid
+  id="gridActivityDefinitionContainer"
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  keyExpr="fullUrl"
+  [hoverStateEnabled]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+  <dxi-column
+    caption="Tên"
+    dataField="resource.name"
+    cellTemplate="myLinkTemplate"
+  ></dxi-column>
+  <dxi-column caption="Tiêu đề" dataField="resource.title"></dxi-column>
+  <dxi-column caption="Trạng thái" dataField="resource.status"></dxi-column>
+  <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+    <a
+      [routerLink]="['/activityDefinition/detail', cellInfo.data.resource.id]"
+      >{{ cellInfo.data.resource.name }}</a
+    >
+  </div>
+</dx-data-grid>
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Định nghĩa hoạt động"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group">
+          <dxi-item itemType="group" [colCount]="2" caption="Thông tin chung">
+            <dxi-item
+              dataField="name"
+              [label]="{ text: 'Tên', location: 'left' }"
+            >
+              <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item
+              dataField="title"
+              [label]="{ text: 'Tiêu đề', location: 'left' }"
+            >
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu điền tiêu đề"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item
+              dataField="subtitle"
+              [label]="{ text: 'Chú thích', location: 'left' }"
+            >
+            </dxi-item>
+            <dxi-item *ngIf="requestResourceTypes">
+              <dxo-label [text]="'Loại hành động'"> </dxo-label>
+              <div *dxTemplate>
+                <dx-drop-down-box
+                  [(value)]="formData.kind"
+                  valueExpr="code"
+                  displayExpr="display"
+                  placeholder="Chọn mục tiêu."
+                  [showClearButton]="true"
+                  [dataSource]="requestResourceTypes.concept"
+                >
+                  <div *dxTemplate="let data of 'content'">
+                    <dx-data-grid
+                      [dataSource]="requestResourceTypes.concept"
+                      (onSelectionChanged)="
+                        onKindSelectionChanged(
+                          $event.selectedRowKeys
+                        )
+                      "
+                      height="100%"
+                    >
+                      <dxi-column caption="Mã" dataField="code"></dxi-column>
+                      <dxi-column
+                        caption="Hiển thị"
+                        dataField="display"
+                      ></dxi-column>
+                      <dxi-column
+                        caption="Định nghĩa"
+                        dataField="definition"
+                      ></dxi-column>
+                      <dxo-selection mode="single"></dxo-selection>
+                      <dxo-filter-row [visible]="true"></dxo-filter-row>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+              </div>
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu chọn mục tiêu"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item *ngIf="requestIntent">
+              <dxo-label [text]="'Mục tiêu'"> </dxo-label>
+              <div *dxTemplate>
+                <dx-drop-down-box
+                  [(value)]="formData.intent"
+                  valueExpr="code"
+                  displayExpr="display"
+                  placeholder="Chọn mục tiêu."
+                  [showClearButton]="true"
+                  [dataSource]="requestIntent.concept"
+                >
+                  <div *dxTemplate="let data of 'content'">
+                    <dx-data-grid
+                      [dataSource]="requestIntent.concept"
+                      (onSelectionChanged)="
+                        onRequestIntentSelectionChanged(
+                          $event.selectedRowKeys
+                        )
+                      "
+                      height="100%"
+                    >
+                      <dxi-column caption="Mã" dataField="code"></dxi-column>
+                      <dxi-column
+                        caption="Hiển thị"
+                        dataField="display"
+                      ></dxi-column>
+                      <dxi-column
+                        caption="Định nghĩa"
+                        dataField="definition"
+                      ></dxi-column>
+                      <dxo-selection mode="single"></dxo-selection>
+                      <dxo-filter-row [visible]="true"></dxo-filter-row>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+              </div>
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu chọn mục tiêu"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item *ngIf="requestPriority">
+              <dxo-label [text]="'Ưu tiên'"> </dxo-label>
+              <div *dxTemplate>
+                <dx-drop-down-box
+                  [(value)]="formData.priority"
+                  valueExpr="code"
+                  displayExpr="display"
+                  placeholder="Chọn.."
+                  [showClearButton]="true"
+                  [dataSource]="requestPriority.concept"
+                >
+                  <div *dxTemplate="let data of 'content'">
+                    <dx-data-grid
+                      [dataSource]="requestPriority.concept"
+                      (onSelectionChanged)="
+                      onPrioritySelectionChanged(
+                          $event.selectedRowKeys
+                        )
+                      "
+                      height="100%"
+                    >
+                      <dxi-column caption="Mã" dataField="code"></dxi-column>
+                      <dxi-column
+                        caption="Hiển thị"
+                        dataField="display"
+                      ></dxi-column>
+                      <dxi-column
+                        caption="Định nghĩa"
+                        dataField="definition"
+                      ></dxi-column>
+                      <dxo-selection mode="single"></dxo-selection>
+                      <dxo-filter-row [visible]="true"></dxo-filter-row>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+              </div>
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu chọn ưu tiên"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item
+              dataField="date"
+              [disabled]="true"
+              [label]="{ text: 'Ngày tạo', location: 'left' }"
+            >
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu điền tiêu đề"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item  [colSpan]="2" *ngIf="procedureCode">
+              <dxo-label [text]="'Dịch vụ y tế'"> </dxo-label>
+              <div *dxTemplate>
+                <dx-drop-down-box
+                  [(value)]="formData.code.coding[0].code"
+                  valueExpr="code"
+                  [dropDownOptions]="dropDownOptions"
+                  displayExpr="display"
+                  placeholder="Chọn dịch vụ."
+                  [showClearButton]="true"
+                  [dataSource]="procedureCode.concept"
+                >
+                  <div *dxTemplate="let data of 'content'">
+                    <dx-data-grid
+                      [dataSource]="procedureCode.concept"
+                  [allowColumnResizing]="true"
+                      (onSelectionChanged)="
+                      onProcedureCodeSelectionChanged(
+                          $event.selectedRowKeys
+                        )
+                      "
+                      height="100%"
+                    >
+                      <dxi-column  [width]="100" caption="Mã" dataField="code"></dxi-column>
+                      <dxi-column  [width]="200"
+                        caption="Hiển thị"
+                        dataField="display"
+                      ></dxi-column>
+                      <dxi-column  [width]="230"
+                        caption="Định nghĩa"
+                        dataField="definition"
+                      ></dxi-column>
+                      <dxo-selection mode="single"></dxo-selection>
+                      <dxo-filter-row [visible]="true"></dxo-filter-row>
+                      <dxo-scrolling mode="virtual"></dxo-scrolling>
+                      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                    </dx-data-grid>
+                  </div>
+                </dx-drop-down-box>
+              </div>
+              <dxi-validation-rule
+                type="required"
+                message="Yêu cầu chọn trạng thái"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item [colSpan]="2"
+              dataField="description"
+              editorType="dxTextArea"
+              [label]="{ text: 'Mô tả', location: 'left' }">
+            </dxi-item>
+            
+              <dxi-item  [colSpan]="2" *ngIf="bodySiteCode">
+                <dxo-label [text]="'Bộ phận cơ thể'"> </dxo-label>
+                <div *dxTemplate>
+                  <dx-drop-down-box
+                    [(value)]="selectedBodySites"
+                    valueExpr="code"
+                    displayExpr="display"
+                    placeholder="Chọn bộ phận cơ thể."
+                    [showClearButton]="true"
+                    [dataSource]="bodySiteCode.concept"
+                  >
+                    <div *dxTemplate="let data of 'content'">
+                      <dx-data-grid
+                        [dataSource]="bodySiteCode.concept"
+                        [selection]="{ mode: 'multiple' }"
+                        [(selectedRowKeys)]="selectedBodySites"
+                        keyExpr="code"
+                        (onSelectionChanged)="
+                        onBodySitesSelectionChanged(
+                            $event.selectedRowKeys
+                          )
+                        "
+                        height="100%"
+                      >
+                        <dxi-column caption="Mã" dataField="code"></dxi-column>
+                        <dxi-column
+                          caption="Hiển thị"
+                          dataField="display"
+                        ></dxi-column>
+                        <dxi-column
+                          caption="Định nghĩa"
+                          dataField="definition"
+                        ></dxi-column>
+                        <dxo-selection mode="single"></dxo-selection>
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-scrolling mode="virtual"></dxo-scrolling>
+                        <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                      </dx-data-grid>
+                    </div>
+                  </dx-drop-down-box>
+                </div>
+                <dxi-validation-rule
+                  type="required"
+                  message="Yêu cầu chọn trạng thái"
+                >
+                </dxi-validation-rule>
+              </dxi-item>
+          </dxi-item>
+        </dxi-item>
+        <dxi-item
+          itemType="button"
+          horizontalAlignment="left"
+          [buttonOptions]="buttonOptions"
+        >
+        </dxi-item>
+      </dx-form>
+    </form>
+  </dx-scroll-view>
+</dx-popup>

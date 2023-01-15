@@ -1,0 +1,163 @@
+<div class="row">
+  <dx-toolbar *ngIf="valueSet">
+    <dxi-item
+      location="before"
+      widget="dxButton"
+      locateInMenu="auto"
+      [options]="editButtonOptions"
+    >
+    </dxi-item>
+
+    <dxi-item
+      widget="dxButton"
+      locateInMenu="always"
+      [options]="settingsButtonOptions"
+    >
+    </dxi-item>
+  </dx-toolbar>
+</div>
+<div class="row" *ngIf="valueSet">
+  <div class="col-3">
+    <dx-form id="form" [formData]="valueSet">
+      <dxi-item itemType="group" [colSpan]="2" caption="Thông tin chung">
+        <dxi-item class="dx-field">
+          <div class="dx-field-label">Tên</div>
+          <div class="dx-field-value-static">{{ valueSet.name }}</div>
+        </dxi-item>
+        <dxi-item>
+          <div class="dx-field-label">Tiêu đề</div>
+          <div class="dx-field-value-static">{{ valueSet.title }}</div>
+        </dxi-item>
+        <dxi-item>
+          <div class="dx-field-label">Ngày tạo</div>
+          <div class="dx-field-value-static">{{ valueSet.date }}</div>
+        </dxi-item>
+        <dxi-item>
+          <div class="dx-field-label">Người tạo</div>
+          <div class="dx-field-value-static">{{ valueSet.publisher }}</div>
+        </dxi-item>
+        <dxi-item>
+          <div class="dx-field-label">Trạng thái</div>
+          <div class="dx-field-value-static">{{ valueSet.status }}</div>
+        </dxi-item>
+      </dxi-item>
+    </dx-form>
+  </div>
+  <div class="col-9">
+    <div class="form">
+      <div class="dx-fieldset">
+        <div class="dx-fieldset-header">Danh sách loạt mã</div>
+        <div class="dx-field-value"></div>
+      </div>
+      <div class="dx-fieldset">
+        <dx-data-grid
+          *ngIf="valueSet.compose"
+          [dataSource]="valueSet.compose.include"
+          [showBorders]="true"
+          [showRowLines]="true"
+          [columnAutoWidth]="true"
+          [hoverStateEnabled]="true"
+          [rowAlternationEnabled]="true"
+          (onRowInserted)="onIncludeRowInserted($event)"
+        >
+          <dxo-editing
+            mode="cell"
+            [allowUpdating]="true"
+            [allowAdding]="true"
+            [allowDeleting]="true"
+          >
+            <dxo-texts addRow="Thêm loạt mã" deleteRow="Xóa"> </dxo-texts>
+          </dxo-editing>
+          <dxi-column caption="Hệ thống" dataField="system">
+            <dxo-lookup
+              [dataSource]="codeSystems"
+              displayExpr="resource.name"
+              valueExpr="fullUrl"
+            >
+            </dxo-lookup>
+          </dxi-column>
+          <dxo-master-detail
+            [enabled]="true"
+            template="detail"
+          ></dxo-master-detail>
+          <div *dxTemplate="let detail of 'detail'">
+            <!-- <concept-element [url]="detail.data.system"></concept-element> -->
+            <valueSetConcept-element [concept]="detail.data.concept"></valueSetConcept-element>
+          </div>
+          <dxo-toolbar>
+            <dxi-item location="before">
+              <div *dxTemplate>
+                <dx-button icon="lock" *ngIf="!valueSet.compose.inactive">
+                </dx-button>
+                <dx-button icon="unlock" *ngIf="valueSet.compose.inactive">
+                </dx-button>
+              </div>
+            </dxi-item>
+            <dxi-item location="after">
+              <div *dxTemplate>
+                <dx-button icon="plus" (onClick)="addNewInclude($event)">
+                </dx-button>
+              </div>
+            </dxi-item>
+          </dxo-toolbar>
+        </dx-data-grid>
+      </div>
+      <!-- <div *ngIf="valueSet.compose">
+        <div
+          class="dx-fieldset"
+          *ngFor="let include of valueSet.compose.include; let i = index"
+        >
+          <dx-drop-down-box
+            *ngIf="codeSystems"
+            [(value)]="valueSet.compose.include[i].system"
+            valueExpr="fullUrl"
+            displayExpr="resource.name"
+            placeholder="Chọn loại mã."
+            [showClearButton]="true"
+            [dataSource]="codeSystems"
+          >
+            <div *dxTemplate="let data of 'content'">
+              <dx-data-grid
+                keyExpr="fullUrl"
+                [dataSource]="codeSystems"
+                [selectedRowKeys]="[valueSet.compose.include[i].system]"
+                [focusedRowEnabled]="true"
+                [focusedRowKey]="valueSet.compose.include[i].system"
+                [hoverStateEnabled]="true"
+                height="100%"
+                (onSelectionChanged)="
+                  onCodeSystemSelectionChanged(
+                    $event.selectedRowKeys,
+                    i,
+                    $event.component
+                  )
+                "
+              >
+                <dxi-column
+                  caption="Name"
+                  dataField="resource.name"
+                ></dxi-column>
+                <dxi-column
+                  caption="Title"
+                  dataField="resource.title"
+                ></dxi-column>
+                <dxo-selection mode="single"></dxo-selection>
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
+                <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+              </dx-data-grid>
+            </div>
+          </dx-drop-down-box>
+        </div>
+      </div>
+      <div class="dx-fieldset">
+          <dx-button icon="plus" (onClick)="addInclude()" text="Thêm loạt mã">
+          </dx-button>
+      </div> -->
+      <div class="dx-fieldset">
+        <dx-button icon="save" type="success" (onClick)="save()" text="Lưu">
+        </dx-button>
+      </div>
+    </div>
+  </div>
+</div>

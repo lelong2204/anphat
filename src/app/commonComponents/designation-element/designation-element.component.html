@@ -1,0 +1,20 @@
+<dx-data-grid
+  [dataSource]="designation"
+  [hoverStateEnabled]="true"
+  [paging]="{ enabled: true, pageSize: 10 }"
+  [scrolling]="{ mode: 'virtual' }"
+  [height]="345"
+>
+<dxo-editing
+            mode="cell"
+            [allowUpdating]="true"
+            [allowAdding]="true"
+            [allowDeleting]="true"
+          >
+            <dxo-texts addRow="Thêm loạt mã" deleteRow="Xóa"> </dxo-texts>
+          </dxo-editing>
+<dxi-column caption="Ngôn ngữ" [width]="100"  dataField="language">
+</dxi-column>
+<dxi-column caption="Hiển thị" dataField="value">
+</dxi-column>
+</dx-data-grid>

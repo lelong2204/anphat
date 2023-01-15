@@ -1,0 +1,47 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<!-- Toolbar -->
+<div class="navbar" 
+*ngIf="logined">
+
+  <dx-toolbar>
+    <dxi-item location="before" widget="dxButton" [options]="homeButtonOptions">
+    </dxi-item>
+    <dxi-item location="before" widget="dxButton" [options]="backButtonOptions">
+    </dxi-item>
+    <dxi-item location="center" widget="dxButton" locateInMenu="never">
+      <div *dxTemplate>
+        <div class="toolbar-label"><h3>{{currentPage}}</h3></div>
+      </div>
+    </dxi-item>
+    <dxi-item
+      location="after"
+      widget="dxButton"
+      locateInMenu="always"
+      [options]="accountButtonOptions"
+    >
+    </dxi-item>
+    <dxi-item
+      widget="dxButton"
+      locateInMenu="always"
+      [options]="settingsButtonOptions"
+    >
+    </dxi-item>
+    <dxi-item
+      widget="dxButton"
+      locateInMenu="always"
+      [options]="logoutButtonOptions"
+    >
+    </dxi-item>
+  </dx-toolbar>
+</div>
+<div class="content">
+  <router-outlet></router-outlet>
+</div>

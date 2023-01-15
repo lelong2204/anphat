@@ -1,0 +1,121 @@
+<dx-data-grid
+[dataSource]="targets"
+[showBorders]="true"
+[showRowLines]="true"
+[columnAutoWidth]="true"
+[showBorders]="true"
+keyExpr="id"
+[hoverStateEnabled]="true"
+(onInitNewRow)="initNewTargetRow($event)"
+  (onRowInserted)="onTargetRowInserted($event)"
+>
+<dxo-editing mode="form" [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true">
+<dxo-texts
+addRow="Thêm chỉ số"
+deleteRow="Xóa">
+</dxo-texts>
+<dxo-form [colCount]="1">
+    <dxi-item itemType="group">
+      <dxi-item dataField="measure"></dxi-item>
+    </dxi-item>
+
+    <dxi-item
+      itemType="group"
+      caption="Giá trị định lượng"
+      [colCount]="3"
+    >
+      <dxi-item dataField="detailQuantity.comparator"></dxi-item>
+      <dxi-item dataField="detailQuantity.unit"></dxi-item>
+      <dxi-item dataField="detailQuantity.value"></dxi-item>
+    </dxi-item>
+    <dxi-item
+      itemType="group"
+      caption="Giá trị phạm vi"
+      [colCount]="3"
+    >
+      <dxi-item dataField="detailRange.low.value"></dxi-item>
+      <dxi-item dataField="detailRange.high.value"></dxi-item>
+      <dxi-item dataField="detailRange.high.unit"></dxi-item>
+    </dxi-item>
+    <dxi-item
+      itemType="group"
+      caption="Giá trị văn bản"
+      [colCount]="1"
+    >
+      <dxi-item dataField="detailString"></dxi-item>
+    </dxi-item>
+    <dxi-item
+      itemType="group"
+      caption="Giá trị logic"
+      [colCount]="1"
+    >
+      <dxi-item dataField="detailBoolean"></dxi-item>
+    </dxi-item>
+  </dxo-form>
+</dxo-editing>
+<dxi-column caption="Chỉ số" cellTemplate="measureTemplate" editCellTemplate="measureDropDownBoxEditor"
+  dataField="measure">
+  <div *dxTemplate="let cellInfo of 'measureTemplate'">
+    <div *ngIf="cellInfo.data.measure">
+      <span> {{cellInfo.data.measure.text}}</span>
+    </div>
+  </div>
+  <dxi-validation-rule
+        type="required"
+        message="Yêu cầu chọn triệu chứng"
+      ></dxi-validation-rule>
+      <div *dxTemplate="let cellInfo of 'measureDropDownBoxEditor'">
+        <dx-drop-down-box
+          [dropDownOptions]="dropDownOptions"
+          [dataSource]="observationCodes.concept"
+          [value]="parseCellInfor(cellInfo)"
+          displayExpr="display"
+          valueExpr="code"
+          contentTemplate="contentTemplate"
+        >
+          <div *dxTemplate="let e of 'contentTemplate'">
+            <dx-data-grid
+              [dataSource]="observationCodes.concept"
+              keyExpr="code"
+              [remoteOperations]="true"
+              [height]="250"
+              [selectedRowKeys]="[cellInfo.value]"
+              [focusedRowEnabled]="true"
+              [focusedRowKey]="cellInfo.value"
+              [hoverStateEnabled]="true"
+              (onSelectionChanged)="
+                onMeasureSelectionChanged($event.selectedRowKeys, cellInfo, e.component)
+              "
+            >
+              <dxi-column caption="Mã" dataField="code"></dxi-column>
+              <dxi-column caption="Hiển thị" dataField="display"></dxi-column>
+              <dxi-column caption="Định nghĩa" dataField="definition"></dxi-column>
+              <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+              <dxo-scrolling mode="virtual"></dxo-scrolling>
+              <dxo-selection mode="single"></dxo-selection>
+            </dx-data-grid>
+          </div>
+        </dx-drop-down-box>
+      </div>
+</dxi-column>
+<dxi-column caption="Chi tiết" [allowEditing]="false">
+</dxi-column>
+<dxi-column caption="Giá trị" dataType="number" dataField="detailQuantity.value" [visible]="false">
+</dxi-column>
+<dxi-column caption="Phép so sánh" dataField="detailQuantity.comparator" [visible]="false">
+</dxi-column>
+<dxi-column caption="Đơn vị tính" dataField="detailQuantity.unit" [visible]="false">
+</dxi-column>
+<dxi-column caption="Từ" dataType="number" dataField="detailRange.low.value"  [visible]="false">
+</dxi-column>
+<dxi-column caption="Đến" dataType="number"  dataField="detailRange.high.value"  [visible]="false">
+</dxi-column>
+<dxi-column caption="Đơn vị tính"  dataField="detailRange.high.unit"  [visible]="false">
+</dxi-column>
+<dxi-column caption="Văn bản"  dataField="detailString"  [visible]="false">
+</dxi-column>
+<dxi-column dataField="detailBoolean" caption="Có/Không"  dataType="boolean"  [visible]="false">
+</dxi-column>
+<dxi-column dataField="detailInteger" caption="Giá trị"  dataType="number"  [visible]="false">
+</dxi-column>
+</dx-data-grid>

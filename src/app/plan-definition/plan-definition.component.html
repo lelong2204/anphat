@@ -1,0 +1,187 @@
+<dx-data-grid
+  id="gridPlanDefinitionContainer"
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  keyExpr="fullUrl"
+  [hoverStateEnabled]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+  <dxi-column
+    caption="Tên"
+    dataField="resource.name"
+    cellTemplate="myLinkTemplate"
+  ></dxi-column>
+  <dxi-column caption="Tiêu đề" dataField="resource.title"></dxi-column>
+  <dxi-column caption="Trạng thái" dataField="resource.status"></dxi-column>
+  <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+    <a
+      [routerLink]="['/planDefinition/detail', cellInfo.data.resource.id]"
+      >{{ cellInfo.data.resource.name }}</a
+    >
+  </div>
+</dx-data-grid>
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Định nghĩa quy trình"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group" [colCount]="2" caption="Thông tin chung">
+          <dxi-item
+            dataField="name"
+            [label]="{ text: 'Tên', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="title"
+            [label]="{ text: 'Tiêu đề', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tiêu đề">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item *ngIf="publicationStatus">
+            <dxo-label [text]="'Trạng thái'"> </dxo-label>
+            <div *dxTemplate>
+              <dx-drop-down-box
+                [(value)]="formData.status"
+                valueExpr="code"
+                displayExpr="display"
+                placeholder="Chọn trạng thái."
+                [showClearButton]="true"
+                [dataSource]="publicationStatus.concept"
+              >
+                <div *dxTemplate="let data of 'content'">
+                  <dx-data-grid
+                    [dataSource]="publicationStatus.concept"
+                    (onSelectionChanged)="
+                      onPublicationStatusSelectionChanged(
+                        $event.selectedRowKeys
+                      )
+                    "
+                    height="100%"
+                  >
+                    <dxi-column caption="Mã" visible="false" dataField="code"></dxi-column>
+                    <dxi-column
+                      caption="Hiển thị"
+                      dataField="display"
+                    ></dxi-column>
+                    <dxi-column
+                      caption="Định nghĩa"
+                      dataField="definition"
+                    ></dxi-column>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                  </dx-data-grid>
+                </div>
+              </dx-drop-down-box>
+            </div>
+            <dxi-validation-rule
+              type="required"
+              message="Yêu cầu chọn trạng thái"
+            >
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="date"
+            [disabled]="true"
+            [label]="{ text: 'Ngày tạo', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tiêu đề">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+          [colSpan]="2"
+          dataField="usage"
+          editorType="dxTextArea"
+          [label]="{ text: 'Cách sử dụng', location: 'left' }"
+        >
+        </dxi-item>
+          <dxi-item
+            [colSpan]="2"
+            dataField="description"
+            editorType="dxTextArea"
+            [label]="{ text: 'Mô tả', location: 'left' }"
+          >
+          </dxi-item>
+        </dxi-item>
+        <!-- <dxi-item itemType="group" caption="Thông tin thêm">
+          <dxi-item itemType="tabbed">
+            <dxo-tab-panel-options [deferRendering]="false">
+            </dxo-tab-panel-options>
+            <dxi-tab title="Chỉ số">
+              <dxi-item
+                itemType="group"
+                name="goal"
+                *ngFor="let goal of formData.goal; let i = index"
+              >
+                <h3>Goal {{ i + 1 }}</h3>
+              </dxi-item>
+              <dxi-item
+                itemType="button"
+                horizontalAlignment="left"
+                [buttonOptions]="addGoalButtonOptions"
+              >
+              </dxi-item>
+            </dxi-tab>
+            <dxi-tab title="Hành động">
+              <dxi-item>
+                <dx-tree-list
+                  [dataSource]="actions"
+                  keyExpr="elementId"
+                  parentIdExpr="parentId"
+                  [showRowLines]="true"
+                  [showBorders]="true"
+                  [columnAutoWidth]="true"
+                  (onInitNewRow)="initNewActionRow($event)"
+                  (onRowInserting)="onActionRowInserting($event)"
+                >
+                <dxo-editing
+                  mode="batch"
+                  [allowAdding]="true"
+                  [allowUpdating]="true"
+                  [allowDeleting]="true"
+                >
+                </dxo-editing>
+                  <dxi-column dataField="prefix" caption="Tiền tố"></dxi-column>
+                  <dxi-column dataField="name" caption="Tên"></dxi-column>
+                  <dxi-column dataField="title" caption="Tiêu đề"></dxi-column>
+                  <dxi-column dataField="priority" caption="Ưu tiên">
+                    <dxo-lookup *ngIf="requestPriority"
+                    [dataSource]="requestPriority.concept"
+                    valueExpr="code"
+                    displayExpr="display"
+                  >
+                  </dxo-lookup>
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                  </dxi-column>
+                  <dxi-column dataField="description" caption="Mô tả"></dxi-column>
+                </dx-tree-list>
+              </dxi-item>
+            </dxi-tab>
+          </dxi-item>
+        </dxi-item> -->
+        <dxi-item
+          itemType="button"
+          horizontalAlignment="left"
+          [buttonOptions]="buttonOptions"
+        >
+        </dxi-item>
+      </dx-form>
+    </form>
+  </dx-scroll-view>
+</dx-popup>

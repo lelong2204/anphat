@@ -1,0 +1,20 @@
+<dx-toolbar>
+    <!-- <dxi-item location="center" widget="dxButton" locateInMenu="never">
+      <div *dxTemplate>
+        <div class="toolbar-label"><h2>Practitioners</h2></div>
+      </div>
+    </dxi-item> -->
+  </dx-toolbar>
+  <dx-data-grid
+    id="gridPractitionerContainer"
+    [dataSource]="dataSource"
+    [showBorders]="true"
+  [showRowLines]="true"
+    [columnAutoWidth]="true"
+    [showBorders]="true"
+    [hoverStateEnabled]="true"
+
+  >
+    <dxi-column caption="Name" dataField="resource.name[0].text"></dxi-column>
+  </dx-data-grid>
+  

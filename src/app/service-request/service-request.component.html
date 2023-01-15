@@ -1,0 +1,21 @@
+
+<dx-toolbar>
+  <!-- <dxi-item location="center" widget="dxButton" locateInMenu="never">
+    <div *dxTemplate>
+      <div class="toolbar-label"><h2>Service Requests</h2></div>
+    </div>
+  </dxi-item> -->
+  
+</dx-toolbar>
+    <dx-data-grid id="gridServiceRequestContainer" 
+    [dataSource]="dataSource" 
+    [showBorders]="true"
+  [showRowLines]="true"
+    [columnAutoWidth]="true"
+    [showBorders]="true">
+        <dxi-column caption="Patient" dataField="resource.subject.display"></dxi-column>
+        <dxi-column caption="Code" dataField="resource.code.text"></dxi-column>
+        <dxi-column caption="Status" dataField="resource.status"></dxi-column>
+        <dxi-column caption="Requester" dataField="resource.requester.display"></dxi-column>
+        <dxi-column caption="Location" dataField="resource.locationReference[0].display"></dxi-column>
+      </dx-data-grid>

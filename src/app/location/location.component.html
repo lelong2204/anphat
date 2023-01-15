@@ -1,0 +1,101 @@
+<dx-responsive-box *ngIf="showOptions" id="select-address">
+	<dxi-row></dxi-row>
+	<dxi-col>
+	</dxi-col>
+	<dxi-col>
+	</dxi-col>
+	<dxi-item>
+		<dxi-location [row]="0" [col]="0"></dxi-location>
+		<div *dxTemplate class="address-type">
+			<a href="location?type=jdn">Danh mục địa phương</a>
+		</div>
+	</dxi-item>
+	<dxi-item>
+		<dxi-location [row]="0" [col]="1"></dxi-location>
+		<div *dxTemplate class="address-type">
+			<a href="location?type=site">Bệnh viện</a>
+		</div>
+	</dxi-item>
+</dx-responsive-box>
+<form *ngIf="!showOptions" id="searchForm" (submit)="onSearch($event)">
+	<dx-form [formData]="dataSearch">
+        <dxi-item itemType="group" colCount="4">
+            <dxi-item dataField="code" [editorOptions]="{placeholder: 'Tìm theo mã', value: code}">
+                <dxo-label [visible]="false" ></dxo-label>  
+            </dxi-item>
+            <dxi-item dataField="name" [editorOptions]="{placeholder: 'Tìm theo tên', value: name}">
+                <dxo-label [visible]="false" ></dxo-label> 
+            </dxi-item>
+            <dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="searchButtonOptions"></dxi-item>
+        </dxi-item>
+    </dx-form>
+</form>
+<dx-data-grid *ngIf="!showOptions" id="gridLocationContainer" [dataSource]="dataSource" [showBorders]="true"
+	[showRowLines]="true" [columnAutoWidth]="true" [showBorders]="true" [hoverStateEnabled]="true"
+	(onToolbarPreparing)="onToolbarPreparing($event)">
+    <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true">
+    </dxo-editing>
+	<dxi-column caption="Name" dataField="resource.name"></dxi-column>
+	<dxi-column caption="Status" dataField="resource.status"></dxi-column>
+	<dxi-column caption="Description" dataField="resource.description"></dxi-column>
+	<dxi-column caption="Organization" dataField="resource.managingOrganization.display"></dxi-column>
+    <dxi-column type="buttons">
+        <dxi-button name="edit" [onClick]="editRow"></dxi-button>
+        <dxi-button name="delete" [onClick]="deleteRow"></dxi-button>
+    </dxi-column>
+	<dxo-master-detail *ngIf="isLocal" [enabled]="true" template="detail"></dxo-master-detail>
+	<div *dxTemplate="let data of 'detail'">
+		<div>Danh sách quận/huyện</div>
+		<app-location-detail [key]="data.key.fullUrl" [type]="type" [hasChild]="true"></app-location-detail>
+	</div>
+</dx-data-grid>
+<dx-popup [maxWidth]="1000" [maxHeight]="900" [showCloseButton]="false" [showTitle]="false" [(visible)]="popupVisible"
+	[closeOnOutsideClick]="true">
+	<dx-scroll-view id="form-submit" style="padding: 0;">
+		<h4 class="text-center" style="margin: 20px;text-align: center;">
+			THÔNG TIN TỈNH
+		</h4>
+		<form (submit)="onFormSubmit($event)" style="margin: 20px;">
+			<dx-form id="form" [formData]="formData">
+				<dxi-item itemType="group" caption="Thông tin chung" colCount="2" class="common-info">
+					<dxi-item dataField="name" [label]="{ text:isLocal ? 'Tên tỉnh': 'Tên bệnh viện', location: 'left' }"></dxi-item>
+					<dxi-item dataField="identifier[0].value" [label]="{ text:isLocal ? 'Mã tỉnh': 'Mã bệnh viện', location: 'left' }"></dxi-item>
+					<dxi-item cssClass="only-one-row" editorType="dxTextArea" dataField="description" [label]="{ text:'Mô tả', location: 'left' }" colSpan="2"></dxi-item>
+					<dxi-item
+						cssClass="only-one-row"
+						colSpan="2"
+						dataField="managingOrganization.reference" editorType="dxSelectBox"
+						[label]="{ text:'Cơ quan điều hành', location: 'left' }"
+						[editorOptions]="{ dataSource: organizations, acceptCustomValue: true, displayExpr:'resource.name', valueExpr:'fullUrl' }"></dxi-item>
+				</dxi-item>
+				<dxi-item *ngIf="isLocal" itemType="group" caption="Định vị" colCount="3">
+					<dxi-item dataField="position.longitude" editorType="dxNumberBox" [label]="{ text:'Kinh độ', location: 'left' }"></dxi-item>
+					<dxi-item dataField="position.latitude" editorType="dxNumberBox" [label]="{ text:'Vĩ độ', location: 'left' }"></dxi-item>
+					<dxi-item dataField="position.altitude" editorType="dxNumberBox" [label]="{ text:'Độ cao', location: 'left' }"></dxi-item>
+				</dxi-item>
+				<dxi-item *ngIf="!isLocal" itemType="group" caption="Địa chỉ">
+					<dxi-item
+						dataField="address.city" editorType="dxSelectBox"
+						[label]="{ text:'Tỉnh', location: 'left' }"
+						[editorOptions]="{ dataSource: city, acceptCustomValue: true, displayExpr:'resource.name', valueExpr:'fullUrl', onValueChanged: onCityChange }"
+					>
+					</dxi-item>
+					<dxi-item
+						dataField="address.district" editorType="dxSelectBox"
+						[label]="{ text:'Quận/Huyện', location: 'left' }"
+						[editorOptions]="{ dataSource: district, acceptCustomValue: true, displayExpr:'resource.name', valueExpr:'fullUrl', onValueChanged: onDistrictChange }"
+					>
+					</dxi-item>
+					<dxi-item
+						dataField="address.wards" editorType="dxSelectBox"
+						[label]="{ text:'Phường xã', location: 'left' }"
+						[editorOptions]="{ dataSource: wards, acceptCustomValue: true, displayExpr:'resource.name', valueExpr:'fullUrl' }">
+					</dxi-item>
+					<dxi-item dataField="address.text" [label]="{ text:'Địa chỉ', location: 'left' }"></dxi-item>
+				</dxi-item>
+				<dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="buttonOptions">
+				</dxi-item>
+			</dx-form>
+		</form>
+	</dx-scroll-view>
+</dx-popup>

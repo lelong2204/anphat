@@ -1,0 +1,84 @@
+<form action="your-action" (submit)="onFormSubmit($event)">
+  <dx-form
+    id="form"
+    [formData]="codeSystem"
+    [readOnly]="false"
+    [showColonAfterLabel]="true"
+    [showValidationSummary]="true"
+    validationGroup="codeSystemData"
+  >
+    <dxi-item itemType="group" caption="Code system information">
+      <dxi-item dataField="id"  [disabled]="true">
+        <dxi-validation-rule type="required" message="id is required">
+        </dxi-validation-rule>
+      </dxi-item>
+      <dxi-item dataField="url"  [disabled]="true">
+        <dxi-validation-rule type="required" message="id is required">
+        </dxi-validation-rule>
+      </dxi-item>
+      <dxi-item dataField="name" >
+        <dxi-validation-rule type="required" message="Name is required">
+        </dxi-validation-rule>
+        <dxi-validation-rule
+          type="pattern"
+          [pattern]="namePattern"
+          message="Do not use digits in the Name"
+        >
+        </dxi-validation-rule>
+      </dxi-item>
+      <dxi-item dataField="title">
+        <dxi-validation-rule type="required" message="Title is required">
+        </dxi-validation-rule>
+        <dxi-validation-rule
+          type="pattern"
+          [pattern]="namePattern"
+          message="Do not use digits in the Title"
+        >
+        </dxi-validation-rule>
+      </dxi-item>
+      <dxi-item dataField="status">
+        <dxi-validation-rule type="required" message="Status is required">
+        </dxi-validation-rule>
+      </dxi-item>
+    </dxi-item>
+    <dxi-item itemType="group" caption="Concept">
+      <dxi-item
+        itemType="group" [colCount]="5" 
+        name="concept"
+        *ngFor="let concept of conceptOptions; let i = index"
+      >
+        <dxi-item
+          [dataField]="'concept[' + i + '].code'"
+        >
+          <dxo-label [text]="'Code '"> </dxo-label>
+        </dxi-item>
+
+        <dxi-item  [colSpan]="2"
+          [dataField]="'concept[' + i + '].display'"
+        >
+          <dxo-label [text]="'Display'"> </dxo-label>
+        </dxi-item>
+
+          <dxi-item  [colSpan]="2"
+          [dataField]="'concept[' + i + '].definition'"
+          [editorOptions]="conceptOptions[i]"
+        >
+          <dxo-label [text]="'Definition'"> </dxo-label>
+        </dxi-item>
+      </dxi-item>
+      <dxi-item
+        itemType="button"
+        horizontalAlignment="left"
+        cssClass="add-phone-button"
+        [buttonOptions]="addConceptButtonOptions"
+      >
+      </dxi-item>
+    </dxi-item>
+    <dxi-item
+      itemType="button"
+      horizontalAlignment="left"
+      [buttonOptions]="buttonOptions"
+    >
+    </dxi-item>
+  </dx-form>
+</form>

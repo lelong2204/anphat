@@ -1,0 +1,33 @@
+<dx-data-grid
+  [dataSource]="names"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [hoverStateEnabled]="true"
+  [rowAlternationEnabled]="true"
+  (onRowInserting)="onNameRowInserting($event)"
+  (onRowInserted)="onNameRowInserted($event)"
+>
+  <dxo-editing
+    mode="form"
+    [allowUpdating]="true"
+    [allowAdding]="true"
+    [allowDeleting]="true"
+  >
+    <dxo-texts addRow="Thêm tên mới" deleteRow="Xóa"> </dxo-texts>
+    <dxo-form [colCount]="2">
+        <dxi-item dataField="use"></dxi-item>
+        <dxi-item dataField="family"></dxi-item>
+        <dxi-item [dataField]="'given[0]'" ></dxi-item>
+        <dxi-item [dataField]="'given[1]'" ></dxi-item>
+    </dxo-form>
+  </dxo-editing>
+  <dxi-column caption="Sử dụng" dataField="use">
+    <dxi-validation-rule type="required" message="Yêu cầu chọn mục đích sử dụng"></dxi-validation-rule>
+  </dxi-column>
+  <dxi-column caption="Họ" dataField="family">
+    <dxi-validation-rule type="required" message="Yêu cầu điền thông tin Họ"></dxi-validation-rule>
+  </dxi-column>
+  <dxi-column caption="Đệm" dataField="given[0]"></dxi-column>
+  <dxi-column caption="Tên" dataField="given[1]"></dxi-column>
+</dx-data-grid>

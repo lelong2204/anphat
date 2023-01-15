@@ -1,0 +1,195 @@
+<dx-toolbar> </dx-toolbar>
+<dx-data-grid
+  id="gridPatientContainer"
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+  <dxi-column caption="Tên bệnh nhân" cellTemplate="myLinkTemplate"></dxi-column>
+  <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+    <a [routerLink]="['/patient/detail', cellInfo.data.resource.id]"
+      ><span *ngIf="cellInfo.data.resource.name[0].family"> {{ cellInfo.data.resource.name[0].family }}</span>
+      <span *ngIf="cellInfo.data.resource.name[0].given[0]">&nbsp; {{ cellInfo.data.resource.name[0].given[0] }}</span>
+      <span *ngIf="cellInfo.data.resource.name[0].given[1]">&nbsp; {{ cellInfo.data.resource.name[0].given[1] }}</span>
+      </a>
+  </div>
+  <dxi-column caption="Giới tính" dataField="resource.gender">
+    <dxo-lookup [dataSource]="administrativeGender.concept" *ngIf="administrativeGender" displayExpr="display" valueExpr="code">
+    </dxo-lookup>
+  </dxi-column>
+  <dxi-column caption="Ngày sinh" dataField="resource.birthDate" cellTemplate="dateTemplate"></dxi-column>
+  <div *dxTemplate="let cellInfo of 'dateTemplate'">
+    {{dateDisplayFormat(cellInfo.data.resource.birthDate)}}
+  </div>
+</dx-data-grid>
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Thêm mới bệnh nhân"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group" [colCount]="3" caption="Thông tin chung">
+          <dxi-item
+            dataField="name[0].family"
+            [label]="{ text: 'Họ', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền họ">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="name[0].given[0]"
+            [label]="{ text: 'Đệm', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="name[0].given[1]"
+            [label]="{ text: 'Tên', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item dataField="gender" *ngIf="administrativeGender">
+            <dxo-label [text]="'Giới tính'"> </dxo-label>
+            <div *dxTemplate>
+              <dx-drop-down-box
+              [dropDownOptions]="dropDownOptions"
+                [(value)]="formData.gender"
+                valueExpr="code"
+                displayExpr="display"
+                placeholder="Chọn giới tính."
+                [showClearButton]="true"
+                [dataSource]="administrativeGender.concept"
+              >
+                <div *dxTemplate="let data of 'content'">
+                  <dx-data-grid
+                    [dataSource]="administrativeGender.concept"
+                    (onSelectionChanged)="
+                      onGenderSelectionChanged($event.selectedRowKeys)
+                    "
+                    height="100%"
+                  >
+                    <dxi-column caption="Mã" dataField="code"></dxi-column>
+                    <dxi-column
+                      caption="Hiển thị"
+                      dataField="display"
+                    ></dxi-column>
+                    <dxi-column
+                      caption="Định nghĩa"
+                      dataField="definition"
+                    ></dxi-column>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                  </dx-data-grid>
+                </div>
+              </dx-drop-down-box>
+            </div>
+            <dxi-validation-rule
+              type="required"
+              message="Yêu cầu chọn trạng thái"
+            >
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="birthDate" editorType="dxDateBox"
+            [label]="{ text: 'Ngày sinh', location: 'left' }"
+          >
+          </dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" [colCount]="3" caption="Thông hành chính">
+          <dxi-item
+            dataField="identifier[0].value"
+            [label]="{ text: 'Căn cước công dân', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="identifier[0].period.start"
+            [label]="{ text: 'Ngày cấp', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="identifier[0].assigner.display"
+            [label]="{ text: 'Nơi cấp', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="identifier[1].value"
+            [label]="{ text: 'Chứng minh nhân dân cũ', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="identifier[1].period.start"
+            [label]="{ text: 'Ngày cấp', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="identifier[1].assigner.display"
+            [label]="{ text: 'Nơi cấp', location: 'left' }"
+          >
+          </dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" caption="Thông tin liên hệ">
+          <dxi-item itemType="group" colCount="3" *ngFor="let contact of formData.telecom; let i = index">
+            <dxi-item [dataField]="'telecom[' + i + '].system'" editorType="dxSelectBox"
+            [label]="{ text:'Loại liên hệ', location: 'left' }"
+            [editorOptions]="{ dataSource: telecomSystem.concept, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+        <dxi-item [dataField]="'telecom[' + i + '].use'" editorType="dxSelectBox"
+            [label]="{ text:'Sử dụng cho', location: 'left' }"
+            [editorOptions]="{ dataSource: telecomUse.concept, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+              <dxi-item [dataField]="'telecom[' + i + '].value'"
+                  [label]="{ text:'Giá trị', location: 'left' }">
+              </dxi-item>
+          </dxi-item>
+          <dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="addContactBtnOption">
+          </dxi-item>
+      </dxi-item>
+      <dxi-item itemType="group" caption="Địa chỉ liên hệ">
+        <dxi-item itemType="group" [colCount]="3">
+            <dxi-item dataField="address[0].use" editorType="dxSelectBox" *ngIf="addressUse"
+                [label]="{ text:'Loại địa chỉ', location: 'left' }"
+                [editorOptions]="{ dataSource: addressUse.concept, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+            <dxi-item dataField="address[0].type" editorType="dxSelectBox"  *ngIf="addressType"
+                [label]="{ text:'Sử dụng cho', location: 'left' }"
+                [editorOptions]="{ dataSource: addressType.concept, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+            <dxi-item dataField="address[0].postalCode"
+                [label]="{ text:'Mã bưu điện', location: 'left' }"></dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" [colCount]="2">
+            <dxi-item dataField="address[0].line[0]"
+                [label]="{ text:'Địa chỉ', location: 'left' }"></dxi-item>
+            <dxi-item dataField="address[0].line[1]"
+                [label]="{ text:'Xã/Phường', location: 'left' }"></dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" [colCount]="3">
+            <dxi-item dataField="address[0].district"
+                [label]="{ text:'Quận/Huyện', location: 'left' }"></dxi-item>
+            <dxi-item dataField="address[0].city"
+                [label]="{ text:'Thành phố', location: 'left' }"></dxi-item>
+            <dxi-item dataField="address[0].state" [label]="{ text:'Tỉnh', location: 'left' }"></dxi-item>
+        </dxi-item>
+    </dxi-item>
+        <dxi-item
+          itemType="button"
+          horizontalAlignment="left"
+          [buttonOptions]="buttonOptions"
+        >
+        </dxi-item>
+      </dx-form>
+    </form>
+    </dx-scroll-view
+></dx-popup>
+<patient-setting (settingHiddenEvent)="settingHidden($event)" [popupVisible]="settingPopupVisible"></patient-setting>

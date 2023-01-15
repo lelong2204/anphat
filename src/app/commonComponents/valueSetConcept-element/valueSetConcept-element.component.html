@@ -1,0 +1,28 @@
+<dx-data-grid
+  *ngIf="concept"
+  [dataSource]="concept"
+  [hoverStateEnabled]="true"
+  [paging]="{ enabled: true, pageSize: 10 }"
+  [filterRow]="{ visible: true }"
+  [scrolling]="{ mode: 'virtual' }"
+  [height]="345"
+  keyExpr="code"
+  (onSelectionChanged)="
+                  onConceptSelectionChanged(
+                    $event.selectedRowsData)"
+>
+  <dxi-column caption="Mã" [width]="100" dataField="code"> </dxi-column>
+  <dxi-column caption="Hiển thị" dataField="display"> </dxi-column>
+  <dxo-selection mode="single"></dxo-selection>
+  <!-- <dxi-column caption="Định nghĩa" dataField="definition">
+</dxi-column> -->
+  <!-- <dxo-master-detail [enabled]="true" template="conceptDetail"></dxo-master-detail>
+        <div *dxTemplate="let detail of 'conceptDetail'">
+          <dx-tab-panel>
+            <dxi-item title="Danh xưng" template="designationsTab"></dxi-item>
+            <div *dxTemplate="let designationsTabItem of 'designationsTab'">
+                <designation-element [code]="detail.data.code" [designation]="detail.data.designation"></designation-element>
+            </div>
+          </dx-tab-panel>
+        </div> -->
+</dx-data-grid>

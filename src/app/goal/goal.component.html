@@ -1,0 +1,262 @@
+<dx-data-grid
+  id="gridGoalContainer"
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  keyExpr="fullUrl"
+  [hoverStateEnabled]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+  <dxi-column
+    caption="Url"
+    dataField="fullUrl"
+    cellTemplate="myLinkTemplate"
+  ></dxi-column>
+
+  <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+    <a [routerLink]="['/goal/detail', cellInfo.data.resource.id]">{{
+      cellInfo.data.resource.description.text
+    }}</a>
+  </div>
+</dx-data-grid>
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Mục tiêu"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group" caption="Thông tin chung">
+          <dxi-item>
+            <dxo-label [text]="'Triệu chứng'"> </dxo-label>
+            <div *dxTemplate>
+              <dx-drop-down-box
+                [(value)]="formData.description.coding[0].code"
+                valueExpr="code"
+                displayExpr="display"
+                placeholder="Chọn kiểu."
+                [showClearButton]="true"
+                [dataSource]="reasonCode.concept"
+              >
+                <div *dxTemplate="let data of 'content'">
+                  <dx-data-grid
+                    [dataSource]="reasonCode.concept"
+                    (onSelectionChanged)="
+                      onReasonCodeSelectionChanged(
+                        $event.selectedRowKeys,
+                        $event
+                      )
+                    "
+                    height="100%"
+                  >
+                    <dxi-column caption="Mã" dataField="code"></dxi-column>
+                    <dxi-column
+                      caption="Hiển thị"
+                      dataField="display"
+                    ></dxi-column>
+                    <dxi-column
+                      caption="Định nghĩa"
+                      dataField="definition"
+                    ></dxi-column>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                  </dx-data-grid>
+                </div>
+              </dx-drop-down-box>
+            </div>
+          </dxi-item>
+          <dxi-item>
+            <dxo-label [text]="'Mức độ ưu tiên'"> </dxo-label>
+            <div *dxTemplate>
+              <dx-drop-down-box
+                [(value)]="formData.priority.coding[0].code"
+                valueExpr="code"
+                displayExpr="display"
+                placeholder="Chọn kiểu."
+                [showClearButton]="true"
+                [dataSource]="goalPriority.concept"
+              >
+                <div *dxTemplate="let data of 'content'">
+                  <dx-data-grid
+                    [dataSource]="goalPriority.concept"
+                    (onSelectionChanged)="
+                      onGoalPrioritySelectionChanged(
+                        $event.selectedRowKeys,
+                        $event
+                      )
+                    "
+                    height="100%"
+                  >
+                    <dxi-column caption="Mã" dataField="code"></dxi-column>
+                    <dxi-column
+                      caption="Hiển thị"
+                      dataField="display"
+                    ></dxi-column>
+                    <dxi-column
+                      caption="Định nghĩa"
+                      dataField="definition"
+                    ></dxi-column>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                  </dx-data-grid>
+                </div>
+              </dx-drop-down-box>
+            </div>
+          </dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" caption="Theo dõi chỉ số">
+          <dxi-item
+            itemType="group"
+            name="target"
+            *ngFor="let target of targetOptions; let i = index"
+            [caption]="i + 1"
+          >
+            <dxi-item itemType="group">
+              <dxi-item>
+                <dxo-label [text]="'Tham số'"> </dxo-label>
+                <div *dxTemplate>
+                  <dx-drop-down-box
+                    [(value)]="formData.target[i].measure.coding[0].code"
+                    valueExpr="code"
+                    displayExpr="display"
+                    placeholder="Chọn kiểu."
+                    [showClearButton]="true"
+                    [dataSource]="observationCodes.concept"
+                  >
+                    <div *dxTemplate="let data of 'content'">
+                      <dx-data-grid
+                        [dataSource]="observationCodes.concept"
+                        (onSelectionChanged)="
+                          onTargetMeasureSelectionChanged(
+                            $event.selectedRowKeys,
+                            i
+                          )
+                        "
+                        height="100%"
+                      >
+                        <dxi-column caption="Mã" dataField="code"></dxi-column>
+                        <dxi-column
+                          caption="Hiển thị"
+                          dataField="display"
+                        ></dxi-column>
+                        <dxi-column
+                          caption="Định nghĩa"
+                          dataField="definition"
+                        ></dxi-column>
+                        <dxo-selection mode="single"></dxo-selection>
+                        <dxo-filter-row [visible]="true"></dxo-filter-row>
+                        <dxo-scrolling mode="virtual"></dxo-scrolling>
+                        <dxo-paging
+                          [enabled]="true"
+                          [pageSize]="10"
+                        ></dxo-paging>
+                      </dx-data-grid>
+                    </div>
+                  </dx-drop-down-box>
+                </div>
+              </dxi-item>
+              <dxi-item itemType="group" [colCount]="3" caption="Giá trị định lượng">
+                  <dxi-item [label]="{ text: 'Phép so sánh', location: 'left' }"
+                    [dataField]="'target['+i+'].detailQuantity.comparator'"
+                  ></dxi-item>
+                <dxi-item [label]="{ text: 'Đơn vị tính', location: 'left' }"
+                    [dataField]="'target['+i+'].detailQuantity.unit'"
+                  ></dxi-item>
+                  <dxi-item [label]="{ text: 'Giá trị', location: 'left' }"
+                    [dataField]="'target['+i+'].detailQuantity.value'"
+                  ></dxi-item>
+              </dxi-item>
+              <dxi-item itemType="group" [colCount]="3" caption="Giá trị phạm vi">
+                <dxi-item [label]="{ text: 'Thấp', location: 'left' }"
+                  [dataField]="'target['+i+'].detailRange.low.value'"
+                ></dxi-item>
+              <dxi-item [label]="{ text: 'Cao', location: 'left' }"
+                  [dataField]="'target['+i+'].detailRange.high.value'"
+                ></dxi-item>
+                <dxi-item [label]="{ text: 'Đơn vị', location: 'left' }"
+                  [dataField]="'target['+i+'].detailRange.high.unit'"
+                ></dxi-item>
+            </dxi-item>
+            <dxi-item itemType="group" caption="Giá trị văn bản">
+              <dxi-item [label]="{ text: 'Giá trị', location: 'left' }"
+                [dataField]="'target['+i+'].detailString'"
+              ></dxi-item>
+          </dxi-item>
+            </dxi-item>
+          </dxi-item>
+          <dxi-item
+            itemType="button"
+            horizontalAlignment="left"
+            cssClass="add-phone-button"
+            [buttonOptions]="addTargetButtonOptions"
+          >
+          </dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" caption="Đầu ra">
+          <dxi-item>
+            <dxo-label [text]="'Chẩn đoán'"> </dxo-label>
+            <div *dxTemplate>
+              <dx-drop-down-box
+                [(value)]="selectedOutcomes"
+                valueExpr="code"
+                displayExpr="display"
+                placeholder="Chọn kiểu."
+                [showClearButton]="true"
+                [dataSource]="reasonCode.concept"
+              >
+                <div *dxTemplate="let data of 'content'">
+                  <dx-data-grid
+                    [dataSource]="reasonCode.concept"
+                    [selection]="{ mode: 'multiple' }"
+                    (onSelectionChanged)="
+                    onOutComeSelectionChanged(
+                        $event.selectedRowKeys,
+                        $event
+                      )
+                    "
+                    keyExpr="code"
+                          [(selectedRowKeys)]="selectedOutcomes"
+                    height="100%"
+                  >
+                    <dxi-column caption="Mã" dataField="code"></dxi-column>
+                    <dxi-column
+                      caption="Hiển thị"
+                      dataField="display"
+                    ></dxi-column>
+                    <dxi-column
+                      caption="Định nghĩa"
+                      dataField="definition"
+                    ></dxi-column>
+                    <dxo-selection mode="single"></dxo-selection>
+                    <dxo-filter-row [visible]="true"></dxo-filter-row>
+                    <dxo-scrolling mode="virtual"></dxo-scrolling>
+                    <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                  </dx-data-grid>
+                </div>
+              </dx-drop-down-box>
+            </div>
+          </dxi-item>
+        </dxi-item>
+        <dxi-item
+          itemType="button"
+          horizontalAlignment="left"
+          [buttonOptions]="buttonOptions"
+        >
+        </dxi-item>
+      </dx-form>
+    </form>
+  </dx-scroll-view>
+</dx-popup>

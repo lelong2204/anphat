@@ -1,0 +1,130 @@
+<form (submit)="onSearchFormSubmit($event)" id="searchForm">
+    <dx-form [formData]="dataSearch">
+        <dxi-item itemType="group" colCount="4">
+            <dxi-item dataField="code" [editorOptions]="{placeholder: 'Tìm theo mã'}">
+                <dxo-label [visible]="false" ></dxo-label>  
+            </dxi-item>
+            <dxi-item dataField="name" [editorOptions]="{placeholder: 'Tìm theo tên'}">
+                <dxo-label [visible]="false" ></dxo-label> 
+            </dxi-item>
+            <dxi-item dataField="type" editorType="dxSelectBox"
+                        [editorOptions]="{ 
+                            showClearButton: true, 
+                            placeholder: 'Chọn loại tổ chức', 
+                            dataSource: organizationTypes, 
+                            acceptCustomValue: true, 
+                            displayExpr:'display', 
+                            valueExpr:'code' 
+                        }">
+                <dxo-label [visible]="false" ></dxo-label>
+            </dxi-item>
+            
+            <dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="searchButtonOptions"></dxi-item>
+        </dxi-item>
+    </dx-form>
+</form>
+<dx-tree-list 
+    id="employees" 
+    [dataSource]="dataSource" 
+    keyExpr="fullUrl" 
+    parentIdExpr="resource.partOf.reference"
+    [showBorders]="true" 
+    [columnAutoWidth]="true" 
+    (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+    <dxo-editing mode="row" [allowUpdating]="true" [allowDeleting]="true">
+    </dxo-editing>
+    <dxi-column dataField="resource.name"></dxi-column>
+    <dxi-column dataField="resource.active"></dxi-column>
+
+    <dxi-column type="buttons">
+        <dxi-item itemType="button"></dxi-item>
+        <dxi-button name="edit" [onClick]="editRow"></dxi-button>
+        <dxi-button name="delete" [onClick]="deleteRow"></dxi-button>
+    </dxi-column>
+</dx-tree-list>
+<dx-popup [maxWidth]="1000" [maxHeight]="900" [showCloseButton]="false" [showTitle]="false" [(visible)]="popupVisible"
+    [closeOnOutsideClick]="true">
+    <dx-scroll-view id="form-submit" style="padding: 0;">
+        <h4 class="text-center" style="margin: 20px;text-align: center;">
+            THÔNG TIN TỔ CHỨC
+        </h4>
+        <form (submit)="onFormSubmit($event)" style="margin: 20px;">
+            <dx-form id="form" [formData]="formData">
+                <dxi-item itemType="group" caption="Thông tin chung">
+                    <dxi-item itemType="group" colCount="2">
+                        <dxi-item dataField="name" [label]="{ text:'Tên tổ chức', location: 'left' }"></dxi-item>
+                        <dxi-item dataField="identifier[0].value"
+                            [label]="{ text:'Mã tổ chức', location: 'left' }"></dxi-item>
+                    </dxi-item>
+                    <dxi-item dataField="active" editorType="dxCheckBox"
+                        [label]="{ text:'Hoạt động', location: 'left' }"></dxi-item>
+                    <dxi-item template="resourceType">
+                        <div *dxTemplate="resourceType" class="dx-field" style="display: flex;">
+                            <div class="dx-field-label" style="width: auto;">Loại tổ chức</div>
+                            <div class="dx-field-value">
+                                <dx-drop-down-box [(value)]="organizationTypeValue" valueExpr="code"
+                                    displayExpr="display" placeholder="Select a value..." [showClearButton]="true"
+                                    [dataSource]="organizationTypes" (onValueChanged)="onResourceTypeChanged($event)" (items)="organizationTypes">
+                                    <div *dxTemplate="let data of 'content'">
+                                        <dx-tree-view [dataSource]="organizationTypes" dataStructure="plain"
+                                            keyExpr="code" selectionMode="multiple" showCheckBoxesMode="normal"
+                                            [selectNodesRecursive]="false" displayExpr="display" [selectByClick]="true"
+                                            (onContentReady)="onTreeViewReady($event)"
+                                            (onItemSelectionChanged)="onTreeViewSelectionChanged($event)">
+                                        </dx-tree-view>
+                                    </div>
+                                </dx-drop-down-box>
+                            </div>
+                        </div>
+                    </dxi-item>
+                    <dxi-item dataField="partOf.reference" editorType="dxSelectBox"
+                        [label]="{ text:'Thuộc tổ chức', location: 'left' }"
+                        [editorOptions]="{ dataSource: dataSource, acceptCustomValue: true, displayExpr:'resource.name', valueExpr:'fullUrl' }"></dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" caption="Thông tin liên hệ">
+                    <dxi-item itemType="group" colCount="3" *ngFor="let contact of formData.telecom; let i = index">
+                        <dxi-item [dataField]="'telecom[' + i + '].system'" editorType="dxSelectBox"
+                            [label]="{ text:'Loại liên hệ', location: 'left' }"
+                            [editorOptions]="{ dataSource: contactTypes, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+                        <dxi-item [dataField]="'telecom[' + i + '].use'" editorType="dxSelectBox"
+                            [label]="{ text:'Sử dụng cho', location: 'left' }"
+                            [editorOptions]="{ dataSource: contactUsingFor, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+                        <dxi-item [dataField]="'telecom[' + i + '].value'"
+                            [label]="{ text:'Giá trị', location: 'left' }">
+                        </dxi-item>
+                    </dxi-item>
+                    <dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="addContactBtnOption">
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="group" caption="Địa chỉ liên hệ">
+                    <dxi-item itemType="group" [colCount]="3">
+                        <dxi-item dataField="address[0].system" editorType="dxSelectBox"
+                            [label]="{ text:'Loại địa chỉ', location: 'left' }"
+                            [editorOptions]="{ dataSource: addressTypes, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+                        <dxi-item dataField="address[0].use" editorType="dxSelectBox"
+                            [label]="{ text:'Sử dụng cho', location: 'left' }"
+                            [editorOptions]="{ dataSource: addressUses, acceptCustomValue: true, displayExpr:'display', valueExpr:'code' }"></dxi-item>
+                        <dxi-item dataField="address[0].postalCode"
+                            [label]="{ text:'Mã bưu điện', location: 'left' }"></dxi-item>
+                    </dxi-item>
+                    <dxi-item itemType="group" [colCount]="2">
+                        <dxi-item dataField="address[0].line[0]"
+                            [label]="{ text:'Địa chỉ', location: 'left' }"></dxi-item>
+                        <dxi-item dataField="address[0].ward"
+                            [label]="{ text:'Xã/Phường', location: 'left' }"></dxi-item>
+                    </dxi-item>
+                    <dxi-item itemType="group" [colCount]="3">
+                        <dxi-item dataField="address[0].district"
+                            [label]="{ text:'Quận/Huyện', location: 'left' }"></dxi-item>
+                        <dxi-item dataField="address[0].city"
+                            [label]="{ text:'Thành phố', location: 'left' }"></dxi-item>
+                        <dxi-item dataField="address[0].state" [label]="{ text:'Tỉnh', location: 'left' }"></dxi-item>
+                    </dxi-item>
+                </dxi-item>
+                <dxi-item itemType="button" horizontalAlignment="left" [buttonOptions]="buttonOptions">
+                </dxi-item>
+            </dx-form>
+        </form>
+    </dx-scroll-view>
+</dx-popup>

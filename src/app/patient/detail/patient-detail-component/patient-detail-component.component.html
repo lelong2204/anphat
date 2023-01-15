@@ -1,0 +1,158 @@
+<!-- <dx-form id="form" *ngIf="patient" [formData]="patient">
+  <dxi-item itemType="group" caption="{{ displayName() }} ({{calculateAge(patient.birthDate)}} tuổi)">
+    <dxi-item itemType="group" >
+      <dxi-item itemType="tabbed">
+        <dxo-tab-panel-options [deferRendering]="false" [showNavButtons]="true">
+        </dxo-tab-panel-options>
+        <dxi-tab title="Tổng quan" >
+                <dx-box direction="col" width="100%" [height]="860">
+                  <dxi-item [ratio]="1" [baseSize]="0">
+                    <dx-box direction="row" width="100%" [height]="125">
+                      <dxi-item  [ratio]="1"> 
+                          <img
+                          src="../../../../assets/photos/patient-phto.png"
+                          width="150"
+                          alt=""
+                          srcset=""
+                        /> 
+                       </dxi-item>
+                      <dxi-item [ratio]="1"> Content </dxi-item>
+                      <dxi-item [ratio]="5"> </dxi-item>
+                    </dx-box>
+                  </dxi-item>
+                  <dxi-item  [ratio]="1"> Footer </dxi-item>
+                </dx-box>
+           
+        </dxi-tab>
+        <dxi-tab title="Giới thiệu">
+          <div class="left">
+            <dx-list
+              #list
+              [dataSource]="introductionList"
+              displayExpr="display"
+              keyExpr="code"
+              [height]="400"
+              selectionMode="single"
+              [selectedItemKeys]="[currentIntroduction.code]"
+                (onSelectionChanged)="introductionListSelectionChanged($event)"
+              [showSelectionControls]="false"
+            ></dx-list>
+          </div>
+          <div class="right">
+            <identifier *ngIf="currentIntroduction.code=='identifier'" [identifiers]="patient.identifier"></identifier>
+            <address-element *ngIf="currentIntroduction.code=='address'" [addresses]="patient.address" ></address-element>
+            <telecom-element  *ngIf="currentIntroduction.code=='telecom'" [telecoms]="patient.telecom"></telecom-element>
+            <contact-element *ngIf="currentIntroduction.code=='contact'"></contact-element>
+          </div>
+        </dxi-tab>
+        
+        <dxi-tab title="Thuốc">
+          <h4>Thuốc</h4>
+        </dxi-tab>
+        <dxi-tab title="Cận lâm sàng">
+          <h4>Cận lâm sàng</h4>
+        </dxi-tab>
+        <dxi-tab title="Hội chẩn online">
+          <h4>Hội chẩn online</h4>
+        </dxi-tab>
+        <dxi-tab title="Hóa đơn">
+          <h4>Hóa đơn</h4>
+        </dxi-tab>
+        <dxi-tab title="Hoạt động">
+          <h4>Hoạt động</h4>
+        </dxi-tab>
+        <dxi-tab title="Ảnh">
+          <h4>Ảnh</h4>
+        </dxi-tab>
+      </dxi-item>
+    </dxi-item>
+  </dxi-item>
+</dx-form> -->
+<h4 *ngIf="patient">
+  {{ displayName() }} ({{ calculateAge(patient.birthDate) }} tuổi)
+</h4>
+<dx-box direction="col" width="100%" [height]="860" *ngIf="patient">
+  <dxi-item [ratio]="1" [baseSize]="0">
+    <dx-tab-panel
+      [dataSource]="tabs"
+      [height]="410"
+      itemTitleTemplate="title"
+      itemTemplate="item"
+      [deferRendering]="false"
+      [showNavButtons]="true"
+      [repaintChangesOnly]="true"
+      [selectedIndex]="selectedIndex"
+    >
+      <div *dxTemplate="let tab of 'title'">
+        <span>{{ tab.title }}</span>
+        <i
+          class="dx-icon dx-icon-close"
+          *ngIf="tab.canClose"
+          (click)="closeButtonHandler(tab)"
+        ></i>
+      </div>
+      <div *dxTemplate="let tab of 'item'">
+        <div class="row">
+          <div class="col-12">
+            <div class="tab-content">
+              <div *ngIf="tab.name == 'overview'">
+                <dx-box direction="row" width="100%" [height]="125">
+                  <dxi-item [ratio]="1">
+                    <img
+                      src="../../../../assets/photos/patient-phto.png"
+                      width="150"
+                      alt=""
+                      srcset=""
+                    />
+                  </dxi-item>
+                  <dxi-item [ratio]="1">
+                    <div class="dx-fieldset">
+                      <div class="dx-field">
+                        <div class="dx-field-label">Giới tính</div>
+                        <div
+                          class="dx-field-value-static"
+                          *ngIf="administrativeGender"
+                        >
+                          {{ displayGender() }}
+                        </div>
+                      </div>
+                      <div class="dx-field">
+                        <div class="dx-field-label">Ngày sinh</div>
+                        <div class="dx-field-value-static">
+                          {{ dateDisplayFormat(patient.birthDate) }}
+                        </div>
+                      </div>
+                    </div>
+                  </dxi-item>
+                  <dxi-item [ratio]="5"> </dxi-item>
+                </dx-box>
+              </div>
+              <div *ngIf="tab.name == 'introduction'">
+                <div class="left">
+                  <dx-list
+                    #list
+                    [dataSource]="introductionList"
+                    displayExpr="display"
+                    keyExpr="code"
+                    [height]="400"
+                    selectionMode="single"
+                    [selectedItemKeys]="[currentIntroduction.code]"
+                      (onSelectionChanged)="introductionListSelectionChanged($event)"
+                    [showSelectionControls]="false"
+                  ></dx-list>
+                </div>
+                <div class="right">
+                  <identifier *ngIf="currentIntroduction.code=='identifier'" [identifiers]="patient.identifier"></identifier>
+                  <address-element *ngIf="currentIntroduction.code=='address'" [addresses]="patient.address" ></address-element>
+                  <telecom-element  *ngIf="currentIntroduction.code=='telecom'" [telecoms]="patient.telecom"></telecom-element>
+                  <contact-element *ngIf="currentIntroduction.code=='contact'"></contact-element>
+                </div>
+              </div>
+          </div>
+        </div>
+        
+        </div>
+      </div>
+    </dx-tab-panel>
+  </dxi-item>
+</dx-box>

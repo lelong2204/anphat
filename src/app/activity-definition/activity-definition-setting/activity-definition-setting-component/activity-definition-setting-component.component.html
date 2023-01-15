@@ -1,0 +1,114 @@
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Cài đặt"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="showPopup"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+  (onHidden)="popup_hidden($event)"
+>
+  <dx-scroll-view>
+      <div class="left-content">
+        <dx-tree-view
+          [dataSource]="settings"
+          selectionMode="single"
+          [selectByClick]="true"
+          (onItemSelectionChanged)="changeSelection($event)"
+        ></dx-tree-view>
+      </div>
+      <div class="right-content">
+        <div class="title-container" *ngIf="formData">
+          <div>
+            <div class="form-name">{{ formData.name }}</div>
+            <div>{{ formData.description }}</div>
+          </div>
+        </div>
+        <form action="your-action" (submit)="onFormSubmit($event)">
+          <dx-form
+            id="form"
+            [formData]="formData"
+            [readOnly]="false"
+            [showColonAfterLabel]="true"
+            [showValidationSummary]="true"
+            validationGroup="codeSystemData"
+          >
+            <dxi-item itemType="group" caption="Thông tin cơ bản">
+              <dxi-item dataField="id"  [disabled]="true"  [label]="{ text: 'Id', location: 'left' }">
+                <dxi-validation-rule type="required" message="id is required">
+                </dxi-validation-rule>
+              </dxi-item>
+              <dxi-item dataField="url"  [disabled]="true"  [label]="{ text: 'Đường dẫn', location: 'left' }">
+                <dxi-validation-rule type="required" message="url is required">
+                </dxi-validation-rule>
+              </dxi-item>
+              <dxi-item dataField="name"   [label]="{ text: 'Tên', location: 'left' }">
+                <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+                </dxi-validation-rule>
+                <dxi-validation-rule
+                  type="pattern"
+                  [pattern]="namePattern"
+                  message="Do not use digits in the Name"
+                >
+                </dxi-validation-rule>
+              </dxi-item>
+              <dxi-item dataField="title"   [label]="{ text: 'Tiêu đề', location: 'left' }">
+                <dxi-validation-rule type="required" message="Title is required">
+                </dxi-validation-rule>
+                <dxi-validation-rule
+                  type="pattern"
+                  [pattern]="namePattern"
+                  message="Do not use digits in the Title"
+                >
+                </dxi-validation-rule>
+              </dxi-item>
+              <dxi-item dataField="status" [disabled]="true" [label]="{ text: 'Trạng thái', location: 'left' }">
+                <dxi-validation-rule type="required" message="Status is required">
+                </dxi-validation-rule>
+              </dxi-item>
+            </dxi-item>
+            <dxi-item itemType="group" caption="Loạt lựa chọn">
+              <dxi-item
+                itemType="group" [colCount]="5" 
+                name="concept"
+                *ngFor="let concept of conceptOptions; let i = index"
+              >
+                <dxi-item [label]="{ text: 'Mã', location: 'left' }"
+                  [dataField]="'concept[' + i + '].code'"
+                >
+                  <dxo-label [text]="'Code '"> </dxo-label>
+                </dxi-item>
+        
+                <dxi-item  [colSpan]="2" [label]="{ text: 'Hiển thị', location: 'left' }"
+                  [dataField]="'concept[' + i + '].display'"
+                >
+                  <dxo-label [text]="'Display'"> </dxo-label>
+                </dxi-item>
+        
+                  <dxi-item  [colSpan]="2" [label]="{ text: 'Định nghĩa', location: 'left' }"
+                  [dataField]="'concept[' + i + '].definition'"
+                  [editorOptions]="conceptOptions[i]"
+                >
+                  <dxo-label [text]="'Definition'"> </dxo-label>
+                </dxi-item>
+              </dxi-item>
+              <dxi-item
+                itemType="button"
+                horizontalAlignment="left"
+                [buttonOptions]="addConceptButtonOptions"
+              >
+              </dxi-item>
+            </dxi-item>
+            <dxi-item
+              itemType="button"
+              horizontalAlignment="left"
+              [buttonOptions]="buttonOptions"
+            >
+            </dxi-item>
+          </dx-form>
+        </form>
+      </div>
+  </dx-scroll-view>
+</dx-popup>

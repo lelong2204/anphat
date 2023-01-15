@@ -1,0 +1,161 @@
+<div class="container">
+    <div class="left-content">
+      <dx-tree-view
+        [dataSource]="settings"
+        selectionMode="single"
+        [selectByClick]="true"
+        (onItemSelectionChanged)="changeSelection($event)"
+      ></dx-tree-view>
+    </div>
+    <div class="right-content">
+      <div class="title-container">
+        <div>
+          <div class="country-name">{{ resourceData.name }}</div>
+          <div>{{ resourceData.description }}</div>
+        </div>
+      </div>
+      <form action="your-action" (submit)="onFormSubmit($event)">
+        <dx-form
+          id="form"
+          [formData]="resourceData"
+          [readOnly]="false"
+          [showColonAfterLabel]="true"
+          [showValidationSummary]="true"
+          validationGroup="codeSystemData"
+        >
+          <dxi-item itemType="group" caption="Code system information">
+            <dxi-item dataField="id"  [disabled]="true">
+              <dxi-validation-rule type="required" message="id is required">
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item dataField="url"  [disabled]="true">
+              <dxi-validation-rule type="required" message="id is required">
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item dataField="name" >
+              <dxi-validation-rule type="required" message="Name is required">
+              </dxi-validation-rule>
+              <dxi-validation-rule
+                type="pattern"
+                [pattern]="namePattern"
+                message="Do not use digits in the Name"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item dataField="title">
+              <dxi-validation-rule type="required" message="Title is required">
+              </dxi-validation-rule>
+              <dxi-validation-rule
+                type="pattern"
+                [pattern]="namePattern"
+                message="Do not use digits in the Title"
+              >
+              </dxi-validation-rule>
+            </dxi-item>
+            <dxi-item dataField="status" [disabled]="true">
+              <dxi-validation-rule type="required" message="Status is required">
+              </dxi-validation-rule>
+            </dxi-item>
+          </dxi-item>
+          <dxi-item itemType="group" caption="Concept">
+            <dxi-item
+              itemType="group" [colCount]="5" 
+              name="concept"
+              *ngFor="let concept of conceptOptions; let i = index"
+            >
+              <dxi-item
+                [dataField]="'concept[' + i + '].code'"
+              >
+                <dxo-label [text]="'Code '"> </dxo-label>
+              </dxi-item>
+      
+              <dxi-item  [colSpan]="2"
+                [dataField]="'concept[' + i + '].display'"
+              >
+                <dxo-label [text]="'Display'"> </dxo-label>
+              </dxi-item>
+      
+                <dxi-item  [colSpan]="2"
+                [dataField]="'concept[' + i + '].definition'"
+                [editorOptions]="conceptOptions[i]"
+              >
+                <dxo-label [text]="'Definition'"> </dxo-label>
+              </dxi-item>
+            </dxi-item>
+            <dxi-item
+              itemType="button"
+              horizontalAlignment="left"
+              cssClass="add-phone-button"
+              [buttonOptions]="addConceptButtonOptions"
+            >
+            </dxi-item>
+          </dxi-item>
+          <dxi-item
+            itemType="button"
+            horizontalAlignment="left"
+            [buttonOptions]="buttonOptions"
+          >
+          </dxi-item>
+        </dx-form>
+      </form>
+      
+<!--   
+      <div class="stats">
+        <div>
+          <div class="sub-title">Area, km<sup>2</sup></div>
+          <div class="stat-value">{{ countryData.area }}</div>
+        </div>
+        <div>
+          <div class="sub-title">Population</div>
+          <div class="stat-value">{{ countryData.population }}</div>
+        </div>
+        <div>
+          <div class="sub-title">GDP, billion</div>
+          <div class="stat-value">{{ "$" + countryData.gdp }}</div>
+        </div>
+      </div> -->
+  
+      <!-- <div class="sub-title">Largest cities</div> -->
+      <!-- <dx-tab-panel
+        id="tabpanel"
+        [(dataSource)]="citiesData"
+        [animationEnabled]="true"
+        [(selectedIndex)]="tabPanelIndex"
+        itemTitleTemplate="title"
+        itemTemplate="city-template"
+      >
+        <div *dxTemplate="let item of 'title'">
+          <span class="tab-panel-title">{{ item.text }}</span>
+        </div>
+        <div *dxTemplate="let city of 'city-template'">
+          <img class="flag" [src]="city.flag" />
+          <div class="right-content">
+            <div
+              ><b>{{ city.capital ? "Capital. " : "" }}</b
+              >{{ city.description }}</div
+            >
+            <div class="stats">
+              <div>
+                <div>Population</div>
+                <div
+                  ><b>{{ city.population }} people</b></div
+                >
+              </div>
+              <div>
+                <div>Area</div>
+                <div
+                  ><b>{{ city.area }} km<sup>2</sup></b></div
+                >
+              </div>
+              <div>
+                <div>Density</div>
+                <div
+                  ><b>{{ city.density }}/km<sup>2</sup></b></div
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </dx-tab-panel> -->
+    </div>
+  </div>

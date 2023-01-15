@@ -1,0 +1,104 @@
+  <!-- Resources -->
+  <h2>Terminology</h2>
+  <p>FHIR-defined terminologies that are used for representing and communicating coded, structured data in the FHIR core specification and profiles</p>
+
+  <div class="card-container">
+    <a class="card" [routerLink]="['/codeSystem']">
+      <i class="dx-icon-contains" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Hệ thống mã</span>
+    </a>
+    <a class="card" [routerLink]="['/valueSet']">
+      <i class="dx-icon-bulletlist" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Thiết lập thuật ngữ</span>
+    </a>
+  </div>
+
+
+  <h2>Administration</h2>
+  <p>The Administrative module covers the base data that is then linked into the other modules for clinical content, finance/billing, workflow, etc.</p>
+
+  <div class="card-container">
+    <a class="card" [routerLink]="['/patient']">
+      <i class="fa fa-bed" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Patient</span>
+    </a>
+    
+    <a class="card" [routerLink]="['/practitioner']">
+      <i class="fa fa-user-md" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Practitioners</span>
+    </a>
+    <a class="card" [routerLink]="['/device']">
+      <i class="fa fa-desktop" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Thiết bị</span>
+    </a>
+    <a class="card" [routerLink]="['/location']">
+      <i class="dx-icon-map" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Location</span>
+    </a>
+    <a class="card" [routerLink]="['/organization']">
+      <i class="dx-icon-hierarchy" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Organization</span>
+    </a>
+  </div>
+
+  <h2>Clinical</h2>
+  <p>This Clinical Module focuses on the FHIR Resources that represent core clinical information for a patient.</p>
+  <div class="card-container">
+    <a class="card" [routerLink]="['/planDefinition']">
+      <i class="dx-icon-dragvertical" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Định nghĩa quy trình</span>
+    </a>
+    <a class="card" [routerLink]="['/activityDefinition']">
+      <i class="dx-icon-repeat" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Định nghĩa hoạt động</span>
+    </a>
+    <a class="card" [routerLink]="['/carePlan']">
+      <i class="fa fa-stethoscope" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Quy trình</span>
+    </a>
+    <a class="card" [routerLink]="['/goal']">
+      <i class="dx-icon-checklist" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Chỉ sổ</span>
+    </a>
+    <a class="card" [routerLink]="['/serviceRequest']">
+      <i class="dx-icon-textdocument" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Yêu cầu dịch vụ</span>
+    </a>
+  </div>
+
+  <h2>Diagnostics</h2>
+  <p>The Diagnostics Module provides an overview and guide to the FHIR content that addresses ordering and reporting of clinical diagnostics including laboratory testing, imaging and genomics.</p>
+  <div class="card-container">
+    <a class="card" [routerLink]="['/imagingStudy']">
+      <i class="dx-icon-image" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Imaging Study</span>
+    </a>
+    <a class="card" [routerLink]="['/diagnosticReport']">
+      <i class="dx-icon-chart" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Diagnostic Report</span>
+    </a>
+  </div>
+
+  <h2>Financial</h2>
+  <p>The Financial module covers the resources and services provided by FHIR to support the costing, financial transactions and billing which occur within a healthcare provider as well as the eligibility, enrollment, authorizations, claims and payments which occur between healthcare providers and insurers and the reporting and notification between insurers and subscribers and patients. </p>
+  <div class="card-container">
+    <a class="card" [routerLink]="['/serviceRequest']">
+      <i class="dx-icon-textdocument" style="font-size: 55px; color: #000"></i>
+      &nbsp;
+      <span style="font-weight: bold">Billing</span>
+    </a>
+    <a class="card" [routerLink]="['/serviceRequest']">
+      <i class="fa fa-money" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Payment</span>
+    </a>
+    <a class="card" [routerLink]="['/coverage']">
+      <i class="dx-icon-codeblock" style="font-size: 55px; color: #000"></i> &nbsp;
+      <span style="font-weight: bold">Coverage</span>
+    </a>
+  </div>
+

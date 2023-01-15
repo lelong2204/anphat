@@ -1,0 +1,19 @@
+<dx-data-grid
+  [dataSource]="telecoms"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [hoverStateEnabled]="true"
+  [rowAlternationEnabled]="true"
+>
+  <dxo-editing
+    mode="cell"
+    [allowUpdating]="true"
+    [allowAdding]="true"
+    [allowDeleting]="true"
+  >
+    <dxo-texts addRow="Thêm mới" deleteRow="Xóa"> </dxo-texts>
+  </dxo-editing>
+  <dxi-column caption="Sử dụng" dataField="use"></dxi-column>
+  <dxi-column caption="Giá trị" dataField="value"></dxi-column>
+</dx-data-grid>

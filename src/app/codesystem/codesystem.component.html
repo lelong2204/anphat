@@ -1,0 +1,194 @@
+<dx-toolbar>
+  <dxi-item location="before" widget="dxButton" locateInMenu="never">
+    <div *dxTemplate>
+      <!-- <div class="toolbar-label"><h2>Code system</h2></div> -->
+    </div>
+  </dxi-item>
+</dx-toolbar>
+<dx-data-grid
+  id="gridCodeSystemContainer"
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  keyExpr="fullUrl"
+  [hoverStateEnabled]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+>
+  <dxi-column
+    caption="Url"
+    dataField="fullUrl"
+    cellTemplate="myLinkTemplate"
+  ></dxi-column>
+
+  <dxi-column caption="Name" dataField="resource.name"></dxi-column>
+  <dxi-column caption="Title" dataField="resource.title"></dxi-column>
+  <dxi-column caption="Status" dataField="resource.status"></dxi-column>
+  <dxi-column
+    caption="HierarchyMeaning"
+    dataField="resource.hierarchyMeaning"
+  ></dxi-column>
+  <dxi-column caption="Publisher" dataField="resource.publisher"></dxi-column>
+  <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
+  <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+    <a [routerLink]="['/codeSystem', cellInfo.data.resource.id]">{{
+      cellInfo.data.fullUrl
+    }}</a>
+  </div>
+  <div *dxTemplate="let masterDetailItem of 'detail'">
+    <dx-toolbar>
+      <dxi-item location="before" widget="dxButton" locateInMenu="never">
+        <div *dxTemplate>
+          <div class="toolbar-label"><h3>Concepts</h3></div>
+        </div>
+      </dxi-item>
+      <dxi-item location="before" widget="dxButton" locateInMenu="never">
+        <a [routerLink]="['/codeSystem', masterDetailItem.data.resource.id]"
+          >Detail</a
+        >
+      </dxi-item>
+    </dx-toolbar>
+    <dx-data-grid
+      [dataSource]="masterDetailItem.data.resource.concept"
+      [showBorders]="true"
+      [columnAutoWidth]="true"
+    >
+      <dxi-column dataField="code"></dxi-column>
+      <dxi-column dataField="display"></dxi-column>
+      <dxi-column dataField="definition"></dxi-column>
+    </dx-data-grid>
+  </div>
+</dx-data-grid>
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Hệ thống thuật ngữ"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group" [colCount]="2" caption="Thông tin chung">
+          <dxi-item
+            dataField="date"
+            [disabled]="true"
+            [label]="{ text: 'Ngày đăng', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="publisher"
+            [disabled]="true"
+            [label]="{ text: 'Người đăng', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item dataField="id" [label]="{ text: 'Id', location: 'left' }">
+            <dxi-validation-rule type="required" message="Yêu cầu điền id">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="name"
+            [label]="{ text: 'Tên', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="title"
+            [label]="{ text: 'Tiêu đề', location: 'left' }"
+          >
+            <dxi-validation-rule type="required" message="Yêu cầu điền tiêu đề">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item *ngIf="publicationStatus">
+          <dxo-label [text]="'Trạng thái'"> </dxo-label>
+          <div *dxTemplate>
+            <dx-drop-down-box
+              [(value)]="formData.status"
+              valueExpr="code"
+              displayExpr="display"
+              placeholder="Chọn trạng thái."
+              [showClearButton]="true"
+              [dataSource]="publicationStatus.concept"
+            >
+              <div *dxTemplate="let data of 'content'">
+                <dx-data-grid
+                  [dataSource]="publicationStatus.concept"
+                  (onSelectionChanged)="
+                    onPublicationStatusSelectionChanged(
+                      $event.selectedRowKeys
+                    )
+                  "
+                  height="100%"
+                >
+                  <dxi-column caption="Mã" dataField="code"></dxi-column>
+                  <dxi-column
+                    caption="Hiển thị"
+                    dataField="display"
+                  ></dxi-column>
+                  <dxi-column
+                    caption="Định nghĩa"
+                    dataField="definition"
+                  ></dxi-column>
+                  <dxo-selection mode="single"></dxo-selection>
+                  <dxo-filter-row [visible]="true"></dxo-filter-row>
+                  <dxo-scrolling mode="virtual"></dxo-scrolling>
+                  <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                </dx-data-grid>
+              </div>
+            </dx-drop-down-box>
+          </div>
+            <dxi-validation-rule
+              type="required"
+              message="Yêu cầu chọn trạng thái"
+            >
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item
+            dataField="experimental"
+            [label]="{ text: 'Thử nghiệm', location: 'left' }"
+          >
+          </dxi-item>
+          <dxi-item
+            dataField="caseSensitive"
+            [label]="{ text: 'Phân biệt chữ hoa', location: 'left' }"
+          >
+          </dxi-item>
+        </dxi-item>
+        <dxi-item itemType="group" caption="Danh sách khái niệm">
+          <dx-tree-list
+            [dataSource]="conceptTreeList"
+            keyExpr="elementId"
+            parentIdExpr="parentId"
+            [showRowLines]="true"
+            [showBorders]="true"
+            [columnAutoWidth]="true"
+            (onInitNewRow)="initNewConceptRow($event)"
+            (onRowInserting)="onConceptRowInserting($event)"
+          >
+          <dxo-editing
+            mode="batch"
+            [allowAdding]="true"
+            [allowUpdating]="true"
+            [allowDeleting]="true"
+          >
+          </dxo-editing>
+            <dxi-column dataField="code" caption="Mã"></dxi-column>
+            <dxi-column dataField="display" caption="Hiển thị"></dxi-column>
+            <dxi-column dataField="definition" caption="Định nghĩa"></dxi-column>
+          </dx-tree-list>
+        </dxi-item>
+        <dxi-item
+          itemType="button"
+          horizontalAlignment="left"
+          [buttonOptions]="buttonOptions"
+        >
+        </dxi-item>
+      </dx-form>
+    </form> </dx-scroll-view
+></dx-popup>

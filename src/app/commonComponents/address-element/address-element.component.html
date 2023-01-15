@@ -1,0 +1,23 @@
+<dx-data-grid
+  [dataSource]="addresses"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [hoverStateEnabled]="true"
+  [rowAlternationEnabled]="true"
+>
+  <dxo-editing
+    mode="cell"
+    [allowUpdating]="true"
+    [allowAdding]="true"
+    [allowDeleting]="true"
+  >
+    <dxo-texts addRow="Thêm mới" deleteRow="Xóa"> </dxo-texts>
+  </dxo-editing>
+  <dxi-column caption="Sử dụng" dataField="use"></dxi-column>
+  <dxi-column caption="Số nhà, đường" dataField="line[0]"></dxi-column>
+  <dxi-column caption="Phường" dataField="line[1]"></dxi-column>
+  <dxi-column caption="Quận/ huyền" dataField="district"></dxi-column>
+  <dxi-column caption="Thành phố" dataField="city"></dxi-column>
+  <dxi-column caption="Tỉnh" dataField="state"></dxi-column>
+</dx-data-grid>

@@ -1,0 +1,178 @@
+
+
+<div class="row">
+  <div class="left-column">
+    <div class="container">
+    <dx-form id="carePlanForm" [formData]="carePlan">
+      <dxi-item itemType="group" [colCount]="2" caption="Thông tin chung">
+        <dxi-item
+          dataField="name"
+          [label]="{ text: 'Tên', location: 'left' }"
+          [editorOptions]="nameEditorOptions"
+        >
+        </dxi-item>
+        <dxi-item dataField="title" [label]="{ text: 'Tiêu đề', location: 'left' }">
+        </dxi-item>
+        <dxi-item
+          dataField="status"
+          [label]="{ text: 'Trạng thái', location: 'left' }"
+        >
+        </dxi-item>
+        <dxi-item
+          dataField="date"
+          [label]="{ text: 'Ngày đăng', location: 'left' }"
+        >
+        </dxi-item>
+        <dxi-item
+          dataField="description"
+          [colSpan]="2"
+          [label]="{ text: 'Mô tả', location: 'left' }"
+        >
+        </dxi-item>
+      </dxi-item>
+    </dx-form>
+  </div>
+</div>
+  <div class="right-column">
+    <div class="container">
+    <dx-data-grid
+  *ngIf="carePlan"
+  [dataSource]="carePlan.activity"
+  [showBorders]="true"
+  [showRowLines]="true"
+  [columnAutoWidth]="true"
+  [showBorders]="true"
+  [hoverStateEnabled]="true"
+  [rowAlternationEnabled]="true"
+  (onInitNewRow)="initNewActivityRow($event)"
+  (onRowInserting)="onActivityRowInserting($event)"
+>
+<dxo-editing mode="cell" [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true">
+  <dxo-texts
+  addRow="Thêm hoạt động"
+  deleteRow="Xóa">
+</dxo-texts>
+</dxo-editing>
+  <dxi-column caption="Loại hoạt động" dataField="detail.kind" editCellTemplate="activityKindDropDownBoxEditor">
+    <dxo-lookup [dataSource]="activityKind.concept" *ngIf="activityKind" displayExpr="display" valueExpr="code">
+    </dxo-lookup>
+    <dxi-validation-rule type="required" message="Yêu cầu chọn loại hoạt động"></dxi-validation-rule>
+  </dxi-column>
+  <div *dxTemplate="let cellInfo of 'activityKindDropDownBoxEditor'">
+    <dx-drop-down-box
+      [dropDownOptions]="dropDownOptions"
+      [dataSource]="activityKind.concept"
+      [(value)]="cellInfo.value"
+      displayExpr="display"
+      valueExpr="code"
+      contentTemplate="contentTemplate"
+    >
+      <div *dxTemplate="let e of 'contentTemplate'">
+        <dx-data-grid
+          [dataSource]="activityKind.concept"
+          keyExpr="code"
+          [remoteOperations]="true"
+          [height]="250"
+          [selectedRowKeys]="[cellInfo.value]"
+          [focusedRowEnabled]="true"
+          [focusedRowKey]="cellInfo.value"
+          [hoverStateEnabled]="true"
+          (onSelectionChanged)="
+            onActivityKindSelectionChanged($event.selectedRowKeys, cellInfo, e.component)
+          "
+        >
+          <dxi-column caption="Mã" dataField="code"></dxi-column>
+          <dxi-column caption="Hiển thị" dataField="display"></dxi-column>
+          <dxi-column caption="Định nghĩa" dataField="definition"></dxi-column>
+          <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
+          <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+      </div>
+    </dx-drop-down-box>
+  </div>
+
+  <dxi-column caption="Dịch vụ" cellTemplate="codeTemplate" dataField="detail.code"  editCellTemplate="activityCodeDropDownBoxEditor">
+    <div *dxTemplate="let cellInfo of 'codeTemplate'">
+      <div *ngIf="cellInfo.data.detail">
+        <span *ngIf="cellInfo.data.detail.code"> {{cellInfo.data.detail.code.text}}</span>
+
+      </div>
+  </div>
+  <dxi-validation-rule type="required" message="Yêu cầu chọn dịch vụ"></dxi-validation-rule>
+  </dxi-column>
+  <div *dxTemplate="let cellInfo of 'activityCodeDropDownBoxEditor'">
+    <dx-drop-down-box
+      [dropDownOptions]="dropDownOptions"
+      [dataSource]="procedureCode.concept"
+      [(value)]="cellInfo.value"
+      displayExpr="display"
+      valueExpr="code"
+      contentTemplate="contentTemplate"
+    >
+      <div *dxTemplate="let e of 'contentTemplate'">
+        <dx-data-grid
+          [dataSource]="procedureCode.concept"
+          keyExpr="code"
+          [remoteOperations]="true"
+          [height]="250"
+          [selectedRowKeys]="[cellInfo.value]"
+          [focusedRowEnabled]="true"
+          [focusedRowKey]="cellInfo.value"
+          [hoverStateEnabled]="true"
+          (onSelectionChanged)="
+            onActivityCodeSelectionChanged($event.selectedRowKeys, cellInfo, e.component)
+          "
+        >
+          <dxi-column caption="Mã" dataField="code"></dxi-column>
+          <dxi-column caption="Hiển thị" dataField="display"></dxi-column>
+          <dxi-column caption="Định nghĩa" dataField="definition"></dxi-column>
+          <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
+          <dxo-selection mode="single"></dxo-selection>
+        </dx-data-grid>
+      </div>
+    </dx-drop-down-box>
+  </div>
+
+  <dxi-validation-rule type="required"></dxi-validation-rule>
+  <dxi-column caption="Mô tả" dataField="detail.description"></dxi-column>
+  <dxo-master-detail [enabled]="true" template="detail"></dxo-master-detail>
+  
+  <div *dxTemplate="let detail of 'detail'">
+    <dx-drop-down-box
+    [(value)]="gridBoxValue"
+    valueExpr="code"
+    displayExpr="display"
+    placeholder="Triệu chứng..."
+    [showClearButton]="true"
+    [dataSource]="procedureReason.concept"
+  >
+
+    <div *dxTemplate="let data of 'content'">
+      <dx-data-grid
+        [dataSource]="procedureReason.concept"
+        [columns]="['code', 'display', 'definition']"
+        [selection]="{ mode: 'multiple' }"
+        [hoverStateEnabled]="true"
+        [paging]="{ enabled: true, pageSize: 10 }"
+        [filterRow]="{ visible: true }"
+        [scrolling]="{ mode: 'virtual' }"
+        [height]="345"
+        [(selectedRowKeys)]="gridBoxValue"
+      >
+      </dx-data-grid>
+    </div>
+  </dx-drop-down-box>
+    
+    <dx-tab-panel style="padding-top: 10px;">
+      <dxi-item title="Chỉ số" template="goalTab"></dxi-item>
+      <div *dxTemplate="let goalTabItem of 'goalTab'">
+        <careplan-goal (newGoalItemEvent)="addGoal($event)" [carePlanId]="carePlan.id" [key]="detail.data.detail.id" [rowData]="detail.data"></careplan-goal>
+      </div>
+    </dx-tab-panel>
+  </div>
+</dx-data-grid>
+  </div>
+  </div>
+</div> 

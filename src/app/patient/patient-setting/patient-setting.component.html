@@ -1,0 +1,33 @@
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Cài đặt"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+  (onHidden)="popup_hidden($event)"
+>
+  <dx-scroll-view>
+    <div class="row">
+    <div class="col-2">
+      <dx-list
+      [dataSource]="menuList"
+      displayExpr="display"
+      keyExpr="code"
+      [height]="400"
+      selectionMode="single"
+      [selectedItemKeys]="[currentMenu.code]"
+        (onSelectionChanged)="menuListSelectionChanged($event)"
+      [showSelectionControls]="false"
+    ></dx-list>
+      </div>
+      <div class="col-10">
+        <h4>Right</h4>
+       
+      </div>
+    </div>
+    </dx-scroll-view
+></dx-popup>

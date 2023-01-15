@@ -1,0 +1,124 @@
+<dx-form id="form" *ngIf="planDefinition" [formData]="planDefinition">
+  <dxi-item itemType="group" [colCount]="5">
+    <dxi-item itemType="group" [colSpan]="2" caption="Thông tin chung">
+      <dxi-item
+        dataField="name"
+        [label]="{ text: 'Tên', location: 'left' }"
+        [editorOptions]="nameEditorOptions"
+      >
+      </dxi-item>
+      <dxi-item
+        dataField="title"
+        [label]="{ text: 'Tiêu đề', location: 'left' }"
+      >
+      </dxi-item>
+      <dxi-item
+        dataField="status"
+        [label]="{ text: 'Trạng thái', location: 'left' }"
+      >
+      </dxi-item>
+      <dxi-item
+        dataField="date"
+        [label]="{ text: 'Ngày đăng', location: 'left' }"
+      >
+      </dxi-item>
+      <dxi-item
+        dataField="description"
+        [colSpan]="2"
+        [label]="{ text: 'Mô tả', location: 'left' }"
+      >
+      </dxi-item>
+    </dxi-item>
+    <dxi-item itemType="group" [colSpan]="3" caption="Hành động">
+      <dx-data-grid
+        [dataSource]="planDefinition.action"
+        [showBorders]="true"
+        [showRowLines]="true"
+        [columnAutoWidth]="true"
+        [showBorders]="true"
+        keyExpr="id"
+        [hoverStateEnabled]="true"
+        (onInitNewRow)="initNewActionRow($event)"
+        (onRowInserting)="onActionRowInserting($event)"
+        (onRowInserted)="onActionRowInserted($event)"
+      >
+        <dxo-editing
+          mode="form"
+          [allowUpdating]="true"
+          [allowAdding]="true"
+          [allowDeleting]="true"
+        >
+          <dxo-texts addRow="Thêm hành động" deleteRow="Xóa"> </dxo-texts>
+        </dxo-editing>
+        <dxi-column caption="Tiền tố" dataField="prefix"></dxi-column>
+        <dxi-column caption="Tiêu đề" dataField="title">
+          <dxi-validation-rule
+            type="required"
+            message="Yêu cầu điền tiêu đề"
+          ></dxi-validation-rule>
+        </dxi-column>
+        <dxi-column
+          caption="Độ ưu tiên"
+          dataField="priority"
+          editCellTemplate="priorityDropDownBoxEditor"
+        >
+          <dxo-lookup
+            [dataSource]="requestPriority.concept"
+            *ngIf="requestPriority"
+            displayExpr="display"
+            valueExpr="code"
+          >
+          </dxo-lookup>
+        </dxi-column>
+        <div *dxTemplate="let cellInfo of 'priorityDropDownBoxEditor'">
+          <dx-drop-down-box
+            [dropDownOptions]="dropDownOptions"
+            [dataSource]="requestPriority.concept"
+            [(value)]="cellInfo.value"
+            displayExpr="display"
+            valueExpr="code"
+            contentTemplate="contentTemplate"
+          >
+            <div *dxTemplate="let e of 'contentTemplate'">
+              <dx-data-grid
+                [dataSource]="requestPriority.concept"
+                keyExpr="code"
+                [remoteOperations]="true"
+                [height]="250"
+                [selectedRowKeys]="[cellInfo.value]"
+                [focusedRowEnabled]="true"
+                [focusedRowKey]="cellInfo.value"
+                [hoverStateEnabled]="true"
+                (onSelectionChanged)="
+                  onPrioritySelectionChanged(
+                    $event.selectedRowKeys,
+                    cellInfo,
+                    e.component
+                  )
+                "
+              >
+                <dxi-column caption="Mã" dataField="code"></dxi-column>
+                <dxi-column caption="Hiển thị" dataField="display"></dxi-column>
+                <dxi-column
+                  caption="Định nghĩa"
+                  dataField="definition"
+                ></dxi-column>
+                <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+                <dxo-scrolling mode="virtual"></dxo-scrolling>
+                <dxo-selection mode="single"></dxo-selection>
+              </dx-data-grid>
+            </div>
+          </dx-drop-down-box>
+        </div>
+        <dxi-column caption="Mô tả" dataField="description"></dxi-column>
+        <dxo-master-detail
+          [enabled]="true"
+          template="detail"
+        ></dxo-master-detail>
+        <div *dxTemplate="let detail of 'detail'">
+          <plan-definition-action [actionId]="detail.key" [goalIds]="detail.data.goalId" (newGoalUpdateEvent)="updateNewGoalAction($event)"></plan-definition-action>
+        </div>
+      </dx-data-grid>
+    </dxi-item>
+  </dxi-item>
+</dx-form>

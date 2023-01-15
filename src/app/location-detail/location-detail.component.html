@@ -1,0 +1,24 @@
+<dx-data-grid 
+    [dataSource]="tasksDataSource" 
+    [showBorders]="true" 
+    [columnAutoWidth]="true"
+    (onSaving)="onSaving($event)"
+>
+    <dxo-editing
+        mode="batch"
+        [allowUpdating]="true"
+        [allowAdding]="true"
+        [allowDeleting]="true"
+        [selectTextOnEditStart]="selectTextOnEditStart"
+        [startEditAction]="startEditAction"
+    >
+    </dxo-editing>
+    <dxi-column caption="Name" dataField="resource.name"></dxi-column>
+    <dxi-column caption="Status" dataField="resource.status"></dxi-column>
+    <dxi-column caption="Description" dataField="resource.description"></dxi-column>
+    <dxo-master-detail *ngIf="hasChild" [enabled]="true" template="detail"></dxo-master-detail>
+	<div *dxTemplate="let data of 'detail'">
+		<div>Danh sách phường/xã</div>
+		<app-location-detail [key]="data.key.fullUrl" [type]="type"></app-location-detail>
+	</div>
+</dx-data-grid>

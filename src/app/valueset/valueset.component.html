@@ -1,0 +1,27 @@
+
+  <dx-data-grid
+    id="gridValueSetContainer"
+    [dataSource]="dataSource"
+    [showBorders]="true"
+    [showRowLines]="true"
+    [columnAutoWidth]="true"
+    [showBorders]="true"
+    keyExpr="fullUrl"
+    [hoverStateEnabled]="true"
+  (onToolbarPreparing)="onToolbarPreparing($event)"
+
+  >
+    <dxi-column caption="Tên" 
+    cellTemplate="myLinkTemplate"
+    ></dxi-column>
+    <dxi-column caption="Tên" dataField="resource.title"></dxi-column>
+    <dxi-column caption="Trạng thái" dataField="resource.status"></dxi-column>
+    <dxi-column caption="Người đăng" dataField="resource.publisher"></dxi-column>
+    <div *dxTemplate="let cellInfo of 'myLinkTemplate'">
+      <a [routerLink]="['/valueSet', cellInfo.data.resource.id]">{{
+        cellInfo.data.resource.name
+      }}</a>
+    </div>
+  </dx-data-grid>
+  
+  <valueSetPopup (popupHiddenEvent)="valueSetPopupHidden($event)" [popupVisible]="popupVisible"></valueSetPopup>

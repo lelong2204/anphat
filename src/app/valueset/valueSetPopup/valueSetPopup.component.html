@@ -1,0 +1,47 @@
+<dx-popup
+  [maxWidth]="1200"
+  [maxHeight]="900"
+  [showCloseButton]="true"
+  title="Thiết lập thuật ngữ"
+  [showTitle]="true"
+  container=".dx-viewport"
+  [(visible)]="popupVisible"
+  [closeOnOutsideClick]="true"
+  contentTemplate="content"
+  (onHidden)="popup_hidden($event)"
+>
+  <dx-scroll-view>
+    <form (submit)="onFormSubmit($event)">
+      <dx-form id="form" [formData]="formData">
+        <dxi-item itemType="group" [colCount]="2" caption="">
+          <dxi-item dataField="date" [disabled]="true"  [label]="{ text: 'Ngày tạo', location: 'left' }">
+          </dxi-item>
+          <dxi-item dataField="publisher" [disabled]="true" [label]="{ text: 'Người tạo', location: 'left' }">
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item dataField="id" [label]="{ text: 'Id', location: 'left' }">
+          </dxi-item>
+          <dxi-item dataField="name" [label]="{ text: 'Tên', location: 'left' }">
+            <dxi-validation-rule type="required" message="Yêu cầu điền tên">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item dataField="title" [label]="{ text: 'Tiêu đề', location: 'left' }">
+            <dxi-validation-rule type="required" message="Yêu cầu điền tiêu đề">
+            </dxi-validation-rule>
+          </dxi-item>
+          <dxi-item dataField="status" [label]="{ text: 'Trạng thái', location: 'left' }">
+          </dxi-item>
+          <dxi-item dataField="description" [colSpan]="2" editorType="dxTextArea" [label]="{ text: 'Mô tả', location: 'left' }">
+          </dxi-item>
+        </dxi-item>
+        <dxi-item
+        itemType="button"
+        horizontalAlignment="left"
+        [buttonOptions]="buttonOptions"
+      >
+      </dxi-item>
+      </dx-form>
+    </form>
+    </dx-scroll-view
+></dx-popup>

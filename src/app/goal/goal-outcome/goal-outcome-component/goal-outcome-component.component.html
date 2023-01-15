@@ -1,0 +1,12 @@
+<dx-tag-box *ngIf="procedureReason"
+      [dataSource]="procedureReason.concept"
+      valueExpr="code"
+      displayExpr="display"
+      [(value)]="selectedCodes" 
+      [showSelectionControls]="true"
+      [showMultiTagOnly]="false"
+      applyValueMode="useButtons"
+      [searchEnabled]="true"
+      (onSelectionChanged)="reasonSelectionChanged($event)"
+    >
+    </dx-tag-box>

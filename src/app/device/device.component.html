@@ -1,0 +1,81 @@
+<dx-tree-list 
+    id="employees" 
+    [dataSource]="dataSource" 
+    keyExpr="fullUrl" 
+    parentIdExpr="resource.parent.reference"
+    [showBorders]="true" 
+    [columnAutoWidth]="true"
+    (onInitNewRow)="initNewDeviceRow($event)"
+    (onInitNewRow)="initNewDeviceRow($event)"
+    (onRowInserted)="onDeviceRowInserted($event)"
+>
+    <dxo-editing mode="popup" [allowAdding]="true" [allowDeleting]="true">
+      <dxo-popup title="Thêm mới thiết bị" [showTitle]="true" [width]="700">
+      </dxo-popup>
+      <dxo-form [colCount]="1">
+        <dxi-item itemType="group" caption="">
+          <dxi-item dataField="resource.manufacturer"></dxi-item>
+          <dxi-item dataField="resource.status">
+          </dxi-item>
+          <dxi-item dataField="resource.modelNumber">
+          </dxi-item>
+          <dxi-item dataField="resource.partNumber">
+          </dxi-item>
+          <dxi-item dataField="resource.parent.reference" [disabled]="true"></dxi-item>
+        </dxi-item>
+      </dxo-form>
+    </dxo-editing>
+    <dxi-column caption="Nhà sản xuất" dataField="resource.manufacturer">
+      <dxi-validation-rule type="required"></dxi-validation-rule>
+    </dxi-column>
+    <dxi-column caption="Số mô hình" dataField="resource.modelNumber">
+    </dxi-column>
+    <dxi-column caption="Số sê ri" dataField="resource.partNumber">
+    </dxi-column>
+    <dxi-column caption="Trạng thái"  dataField="resource.status" editCellTemplate="statusDropDownBoxEditor">
+      <dxo-lookup [dataSource]="statusConcepts" displayExpr="display" valueExpr="code">
+      </dxo-lookup>
+      <dxi-validation-rule type="required"></dxi-validation-rule>
+    </dxi-column>
+    <dxi-column caption="Thuộc thiết bị" [visible]="false"  dataField="resource.parent.reference">
+
+    </dxi-column>
+    <div *dxTemplate="let cellInfo of 'statusDropDownBoxEditor'">
+      <dx-drop-down-box
+        [dropDownOptions]="dropDownOptions"
+        [dataSource]="statusConcepts"
+        [(value)]="cellInfo.value"
+        displayExpr="display"
+        valueExpr="code"
+        contentTemplate="contentTemplate"
+      >
+        <div *dxTemplate="let e of 'contentTemplate'">
+          <dx-data-grid
+            [dataSource]="deviceStatus.compose.include"
+            keyExpr="system"
+            [remoteOperations]="true"
+            [height]="250"
+            [focusedRowEnabled]="true"
+            [hoverStateEnabled]="true"
+          >
+            <dxi-column caption="Loại" dataField="system"></dxi-column>
+            <dxo-master-detail
+            [enabled]="true"
+            [autoExpandAll]="true"
+            template="detail"
+          ></dxo-master-detail>
+          <div *dxTemplate="let detail of 'detail'">
+            <!-- <concept-element [url]="detail.data.system"></concept-element> -->
+            <valueSetConcept-element (conceptSelectionChangedEvent)="statusSelectionChanged($event,cellInfo,e.component)" [concept]="detail.data.concept"></valueSetConcept-element>
+          </div>
+            <dxo-scrolling mode="virtual"></dxo-scrolling>
+          </dx-data-grid>
+        </div>
+      </dx-drop-down-box>
+    </div>
+    <!-- <dxi-column type="buttons">
+        <dxi-item itemType="button"></dxi-item>
+        <dxi-button name="edit" [onClick]="editRow"></dxi-button>
+        <dxi-button name="delete" [onClick]="deleteRow"></dxi-button>
+    </dxi-column> -->
+</dx-tree-list>
